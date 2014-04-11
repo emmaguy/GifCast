@@ -4,8 +4,9 @@
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}">
 
-    <ListView
+    <GridView android:id="@+id/gridview"
+        android:numColumns="@integer/grid_rows"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
