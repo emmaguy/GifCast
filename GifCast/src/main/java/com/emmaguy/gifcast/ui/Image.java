@@ -1,5 +1,7 @@
 package com.emmaguy.gifcast.ui;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,8 @@ public class Image {
 
     public void updateUrls(List<String> urls) {
         this.urls = urls;
+
+        Log.d("Emma", "urls now: " + urls.size());
     }
 
     public String thumbnailUrl() {
@@ -30,5 +34,9 @@ public class Image {
 
     public int getNumberOfImages() {
         return urls.size();
+    }
+
+    public String[] getImageUrls() {
+        return urls.toArray(new String[urls.size()]);
     }
 }

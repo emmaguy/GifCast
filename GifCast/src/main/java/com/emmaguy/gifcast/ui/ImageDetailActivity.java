@@ -4,16 +4,16 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 
 import com.emmaguy.gifcast.R;
 import com.squareup.picasso.Picasso;
 
-import pl.droidsonroids.gif.GifImageView;
-
 
 public class ImageDetailActivity extends Activity {
-
-    private GifImageView gifImageView;
+    private ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,12 +21,23 @@ public class ImageDetailActivity extends Activity {
 
         setContentView(R.layout.activity_image_detail);
 
-        gifImageView = (GifImageView)findViewById(R.id.gifimageview);
+        scrollView = (ScrollView)findViewById(R.id.scrollview);
 
         Bundle extras = getIntent().getExtras();
-        String url = extras.getString("url");
+        String[] urls = extras.getStringArray("url");
 
-        Picasso.with(this).load(url).into(gifImageView);
+        for(String url : urls) {
+
+            ImageView imageView = new ImageView(this);
+
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT);
+
+            scrollView.addView(imageView, 0, params);
+
+            Picasso.with(this).load(url).into(imageView);
+        }
     }
 
 

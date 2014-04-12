@@ -63,7 +63,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         Image img = (Image)mAdapter.getItem(i);
 
         Intent intent = new Intent(this, ImageDetailActivity.class);
-        intent.putExtra("url", img.thumbnailUrl());
+        intent.putExtra("url", img.getImageUrls());
         startActivity(intent);
     }
 
@@ -95,7 +95,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                             final String imgurUrl = mImgurUrlParser.parseUrl(url);
                             if(mImgurUrlParser.isImgurGallery(url)) {
 
-                                final Image galleryImg = new Image(imgurUrl);
+                                final Image galleryImg = new Image();
                                 imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
                                     @Override
                                     public void success(ImgurGalleryJson imgurGalleryJson, Response response) {
@@ -111,8 +111,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                                     }
                                 });
                             } else {
-                                final Image image = new Image(imgurUrl);
-                                Log.d("Emma", "img: " + imgurUrl);
+                                final Image image = new Image();
                                 imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
                                     @Override
                                     public void success(ImgurJson imgurJson, Response response) {
