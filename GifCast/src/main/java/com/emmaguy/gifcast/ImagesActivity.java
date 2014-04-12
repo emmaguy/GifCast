@@ -10,8 +10,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.emmaguy.gifcast.data.LatestImagesRedditService;
-import com.emmaguy.gifcast.data.RedditData;
-import com.emmaguy.gifcast.data.RedditImageData;
+import com.emmaguy.gifcast.data.RedditNewImagesJson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,13 +71,13 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
         public void load(GifCastApplication app) {
             LatestImagesRedditService imagesService = app.getLatestImagesRedditService();
-            imagesService.getNewImagesInSubreddit("gifs", new Callback<RedditData>() {
+            imagesService.getNewImagesInSubreddit("gifs", new Callback<RedditNewImagesJson>() {
                 @Override
-                public void success(RedditData data, Response response) {
+                public void success(RedditNewImagesJson data, Response response) {
                     if(mActivity == null || data == null || data.data == null || data.data.children == null) return;
 
                     List<String> urls = new ArrayList<String>();
-                    for(RedditImageData i : data.data.children) {
+                    for(RedditNewImagesJson.RedditData.RedditImageData i : data.data.children) {
                         String url = i.data.url;
 
                         if(isImage(url)) {

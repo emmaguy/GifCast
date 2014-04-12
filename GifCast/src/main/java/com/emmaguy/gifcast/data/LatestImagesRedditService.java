@@ -6,5 +6,5 @@ import retrofit.http.Path;
 
 public interface LatestImagesRedditService {
     @GET("/r/{subreddit}/new.json?sort=new&limit=100")
-    void getNewImagesInSubreddit(@Path("subreddit") String subreddit, Callback<RedditData> callback);
+    void getNewImagesInSubreddit(@Path("subreddit") String subreddit, Callback<RedditNewImagesJson> callback);
 }
