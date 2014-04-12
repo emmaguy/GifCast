@@ -3,13 +3,13 @@
     package="com.emmaguy.gifcast" >
 
     <application
+        android:name="com.emmaguy.gifcast.GifCastApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name="com.emmaguy.gifcast.GifCastApplication">
+        android:theme="@style/AppTheme" >
         <activity
-            android:name=".ImagesActivity"
+            android:name="com.emmaguy.gifcast.ImagesActivity"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,7 +17,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.emmaguy.gifcast.ImageDetailActivity"
+            android:label="@string/title_activity_image_detail"
+            android:parentActivityName="com.emmaguy.gifcast.ImagesActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ImagesActivity" />
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

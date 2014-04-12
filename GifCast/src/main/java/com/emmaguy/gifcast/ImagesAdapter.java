@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -47,9 +48,13 @@ public class ImagesAdapter extends BaseAdapter {
         if (view == null) {
             view = mViewInflater.inflate(R.layout.image_item, null);
         }
-        ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
+        String url = mImageUrls.get(position);
 
-        Picasso.with(mContext).load(mImageUrls.get(position)).into(imageView);
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
+        TextView textView = (TextView)view.findViewById(R.id.textview);
+        textView.setText(url);
+
+        Picasso.with(mContext).load(url).into(imageView);
 
         return view;
     }

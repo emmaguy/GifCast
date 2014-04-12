@@ -1,8 +1,11 @@
 package com.emmaguy.gifcast;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -17,7 +20,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ImagesActivity extends Activity {
+public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private final RedditImagesLoader mImagesLoader = new RedditImagesLoader();
     private GridView mGridView;
@@ -31,6 +34,7 @@ public class ImagesActivity extends Activity {
         mGridView = (GridView) findViewById(R.id.gridview);
         mAdapter = new ImagesAdapter(this);
         mGridView.setAdapter(mAdapter);
+        mGridView.setOnItemClickListener(this);
     }
 
     @Override
@@ -46,6 +50,15 @@ public class ImagesActivity extends Activity {
         mImagesLoader.setTargetActivity(null);
 
         super.onPause();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        String url = (String)mAdapter.getItem(i);
+
+        Intent intent = new Intent(this, ImageDetailActivity.class);
+        intent.putExtra("url", url);
+        startActivity(intent);
     }
 
     public static class RedditImagesLoader {
@@ -64,7 +77,10 @@ public class ImagesActivity extends Activity {
 
                     List<String> urls = new ArrayList<String>();
                     for(RedditImageData i : data.data.children) {
-                        urls.add(i.data.url);
+                        if(isImage(i.data.url)) {
+                            Log.d("Emma", i.data.url);
+                            urls.add(i.data.url);
+                        }
                     }
 
                     mActivity.mAdapter.setImageUrls(urls);
@@ -78,6 +94,13 @@ public class ImagesActivity extends Activity {
                     Toast.makeText(mActivity, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+        }
+
+        private static boolean isImage(String pictureFileName) {
+            return pictureFileName.endsWith(".png")
+                    || pictureFileName.endsWith(".gif")
+                    || pictureFileName.endsWith(".jpg")
+                    || pictureFileName.endsWith(".jpeg");
         }
     }
 }
