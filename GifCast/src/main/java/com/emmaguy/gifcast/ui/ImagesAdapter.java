@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.ui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.emmaguy.gifcast.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
@@ -18,25 +19,25 @@ public class ImagesAdapter extends BaseAdapter {
     private final LayoutInflater mViewInflater;
     private final Context mContext;
 
-    private List<String> mImageUrls = Collections.emptyList();
+    private List<Image> images = Collections.emptyList();
 
     public ImagesAdapter(Context context) {
         mContext = context;
         mViewInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setImageUrls(List<String> urls) {
-        mImageUrls = urls;
+    public void setImageUrls(List<Image> images) {
+        this.images = images;
 
         notifyDataSetChanged();
     }
 
     @Override public int getCount() {
-        return mImageUrls.size();
+        return images.size();
     }
 
     @Override public Object getItem(int position) {
-        return mImageUrls.get(position);
+        return images.get(position);
     }
 
     @Override public long getItemId(int position) {
@@ -48,13 +49,13 @@ public class ImagesAdapter extends BaseAdapter {
         if (view == null) {
             view = mViewInflater.inflate(R.layout.image_item, null);
         }
-        String url = mImageUrls.get(position);
+        Image img = images.get(position);
 
         ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
         TextView textView = (TextView)view.findViewById(R.id.textview);
-        textView.setText(url);
+        textView.setText(img.getNumberOfImages() + " " + img.thumbnailUrl());
 
-        Picasso.with(mContext).load(url).into(imageView);
+        Picasso.with(mContext).load(img.thumbnailUrl()).into(imageView);
 
         return view;
     }

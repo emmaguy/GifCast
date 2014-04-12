@@ -1,10 +1,11 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.emmaguy.gifcast.R;
 import com.squareup.picasso.Picasso;
 
 import pl.droidsonroids.gif.GifImageView;
