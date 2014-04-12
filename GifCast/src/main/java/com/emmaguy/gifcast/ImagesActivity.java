@@ -23,6 +23,7 @@ import retrofit.client.Response;
 public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private final RedditImagesLoader mImagesLoader = new RedditImagesLoader();
+
     private GridView mGridView;
     private ImagesAdapter mAdapter;
 
@@ -62,7 +63,8 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     }
 
     public static class RedditImagesLoader {
-        ImagesActivity mActivity;
+        private ImagesActivity mActivity;
+        private final ImgurUrlParser mImgurUrlParser = new ImgurUrlParser();
 
         public void setTargetActivity(ImagesActivity a) {
             mActivity = a;
@@ -77,9 +79,14 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
                     List<String> urls = new ArrayList<String>();
                     for(RedditImageData i : data.data.children) {
-                        if(isImage(i.data.url)) {
-                            Log.d("Emma", i.data.url);
-                            urls.add(i.data.url);
+                        String url = i.data.url;
+
+                        if(isImage(url)) {
+                            urls.add(url);
+                        } else if(mImgurUrlParser.isImgurUrl(url)) {
+                            urls.add(mImgurUrlParser.parseUrl(url));
+                        } else {
+                            Log.d("GifCast", "Ignoring url: " + url);
                         }
                     }
 

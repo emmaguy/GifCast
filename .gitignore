@@ -26,10 +26,11 @@ local.properties
 # Android studio
 .idea/*
 *.iml
-InfectionPolicyProject/.idea/
 **/*.iml
 .gradle/
 **/build/
 
 # OSX
 **/.DS_Store
+
+**hidden_strings.xml**
