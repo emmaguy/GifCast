@@ -51,11 +51,13 @@ public class ImagesAdapter extends BaseAdapter {
         }
         Image img = images.get(position);
 
-        ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
-        TextView textView = (TextView)view.findViewById(R.id.textview);
-        textView.setText(img.getNumberOfImages() + " " + img.thumbnailUrl());
+        if(img.getNumberOfImages() > 0) {
+            ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
+            TextView textView = (TextView) view.findViewById(R.id.textview);
+            textView.setText(img.getNumberOfImages() + " " + img.thumbnailUrl());
 
-        Picasso.with(mContext).load(img.thumbnailUrl()).into(imageView);
+            Picasso.with(mContext).load(img.thumbnailUrl()).into(imageView);
+        }
 
         return view;
     }

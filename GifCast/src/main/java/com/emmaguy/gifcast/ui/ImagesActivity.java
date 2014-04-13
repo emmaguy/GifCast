@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -35,7 +37,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_images);
 
         mGridView = (GridView) findViewById(R.id.gridview);
         mAdapter = new ImagesAdapter(this);
@@ -56,6 +58,21 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mImagesLoader.setTargetActivity(null);
 
         super.onPause();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_images, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -96,6 +113,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                             if(mImgurUrlParser.isImgurGallery(url)) {
 
                                 final Image galleryImg = new Image();
+                                urls.add(galleryImg);
                                 imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
                                     @Override
                                     public void success(ImgurGalleryJson imgurGalleryJson, Response response) {
@@ -112,6 +130,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                                 });
                             } else {
                                 final Image image = new Image();
+                                urls.add(image);
                                 imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
                                     @Override
                                     public void success(ImgurJson imgurJson, Response response) {

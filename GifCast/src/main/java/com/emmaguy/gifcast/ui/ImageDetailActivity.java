@@ -1,19 +1,25 @@
 package com.emmaguy.gifcast.ui;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ScrollView;
+import android.widget.LinearLayout;
 
 import com.emmaguy.gifcast.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
+
 
 public class ImageDetailActivity extends Activity {
-    private ScrollView scrollView;
+    private LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,44 +27,52 @@ public class ImageDetailActivity extends Activity {
 
         setContentView(R.layout.activity_image_detail);
 
-        scrollView = (ScrollView)findViewById(R.id.scrollview);
+        linearLayout = (LinearLayout)findViewById(R.id.linearlayout);
 
         Bundle extras = getIntent().getExtras();
         String[] urls = extras.getStringArray("url");
 
-        for(String url : urls) {
+        for(int i = urls.length - 1; i >= 0; i--) {
 
-            ImageView imageView = new ImageView(this);
+            final GifImageView imageView = new GifImageView(this);
+
+            com.squareup.picasso.Target t = new com.squareup.picasso.Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                    int bytes = bitmap.getByteCount();
+                    ByteBuffer buffer = ByteBuffer.allocate(bytes); //Create a new buffer
+                    bitmap.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
+
+                    try {
+                        GifDrawable gifFromBytes = new GifDrawable(buffer.array());
+                        imageView.setImageDrawable(gifFromBytes);
+
+                    } catch (IOException e) {
+                        Log.e("Emma", "Exception making gif: " + e.getMessage(), e);
+                    }
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    Log.e("Emma", "Exception onBitmapFailed: " + errorDrawable);
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT);
 
-            scrollView.addView(imageView, 0, params);
+            linearLayout.addView(imageView, 0, params);
 
-            Picasso.with(this).load(url).into(imageView);
+            
+
+            Picasso.with(this).load(urls[i]).into(t);
         }
     }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.image_detail, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 }
