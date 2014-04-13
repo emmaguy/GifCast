@@ -40,24 +40,16 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         setContentView(R.layout.activity_images);
 
         mGridView = (GridView) findViewById(R.id.gridview);
-        mAdapter = new ImagesAdapter(this);
+        mAdapter = new ImagesAdapter(this, getApp().getRequestQueue());
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         mImagesLoader.setTargetActivity(this);
-        mImagesLoader.load((GifCastApplication) getApplication());
+        mImagesLoader.load(getApp());
     }
 
-    @Override
-    protected void onPause() {
-        mImagesLoader.setTargetActivity(null);
-
-        super.onPause();
+    private GifCastApplication getApp() {
+        return (GifCastApplication) getApplication();
     }
 
     @Override

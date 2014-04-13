@@ -6,7 +6,6 @@ import com.emmaguy.gifcast.data.api.ImgurService;
 import com.emmaguy.gifcast.data.api.LatestImagesRedditService;
 import com.emmaguy.gifcast.data.model.ImgurGalleryJson;
 import com.emmaguy.gifcast.data.model.ImgurGalleryJsonDeserializer;
-import com.emmaguy.gifcast.data.model.ImgurJson;
 import com.google.gson.GsonBuilder;
 
 import retrofit.RequestInterceptor;
@@ -16,6 +15,7 @@ import retrofit.converter.GsonConverter;
 public class GifCastApplication extends Application {
     private LatestImagesRedditService mLatestImagesRedditService;
     private ImgurService mImgurService;
+    private CachedRequestQueue mRequestQueue;
 
     @Override public void onCreate() {
         super.onCreate();
@@ -39,6 +39,12 @@ public class GifCastApplication extends Application {
                 .build();
 
         mImgurService = imgurRestAdapter.create(ImgurService.class);
+
+        mRequestQueue = new CachedRequestQueue(this);
+    }
+
+    public CachedRequestQueue getRequestQueue() {
+        return mRequestQueue;
     }
 
     public ImgurService getImgurService() {

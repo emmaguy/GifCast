@@ -8,8 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.emmaguy.gifcast.CachedRequestQueue;
 import com.emmaguy.gifcast.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,10 +18,12 @@ public class ImagesAdapter extends BaseAdapter {
 
     private final LayoutInflater mViewInflater;
     private final Context mContext;
+    private final CachedRequestQueue mRequestQueue;
 
     private List<Image> images = Collections.emptyList();
 
-    public ImagesAdapter(Context context) {
+    public ImagesAdapter(Context context, CachedRequestQueue requestQueue) {
+        mRequestQueue = requestQueue;
         mContext = context;
         mViewInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -44,21 +46,39 @@ public class ImagesAdapter extends BaseAdapter {
         return position;
     }
 
-    @Override public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+    @Override public View getView(int position, View view, ViewGroup parent) {
+        final ViewHolder viewHolder;
         if (view == null) {
             view = mViewInflater.inflate(R.layout.image_item, null);
+            viewHolder = new ViewHolder();
+            viewHolder.imageView = (ImageView) view.findViewById(R.id.imageview);;
+            viewHolder.textView = (TextView) view.findViewById(R.id.textview);
+            view.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder)view.getTag();
+            viewHolder.imageView.setImageDrawable(null);
+            viewHolder.textView.setText(null);
+
+            // cancel the request for the old cell
+//            if(viewHolder.image.getNumberOfImages() > 0) {
+//                mRequestQueue.cancelRequest(viewHolder.image.thumbnailUrl());
+//            }
         }
-        Image img = images.get(position);
 
-        if(img.getNumberOfImages() > 0) {
-            ImageView imageView = (ImageView) view.findViewById(R.id.imageview);
-            TextView textView = (TextView) view.findViewById(R.id.textview);
-            textView.setText(img.getNumberOfImages() + " " + img.thumbnailUrl());
+        // update the Image object for this cell
+        viewHolder.image = images.get(position);
 
-            Picasso.with(mContext).load(img.thumbnailUrl()).into(imageView);
+        if(viewHolder.image.getNumberOfImages() > 0) {
+            viewHolder.textView.setText(viewHolder.image.getNumberOfImages() + " " + viewHolder.image.thumbnailUrl());
+            mRequestQueue.addRequest(viewHolder.image.thumbnailUrl(), viewHolder.imageView);
         }
 
         return view;
+    }
+
+    private class ViewHolder {
+        public Image image;
+        public ImageView imageView;
+        public TextView textView;
     }
 }
