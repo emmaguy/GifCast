@@ -1,50 +1,46 @@
 package com.emmaguy.gifcast;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.android.volley.Cache;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
 
 import pl.droidsonroids.gif.GifDrawable;
 
 public class CachedRequestQueue {
     private RequestQueue mRequestQueue;
+    private GifDrawableLruCache mCache;
+    private HashMap<String, String> mRequestedUrls = new HashMap<String, String>();
 
     public CachedRequestQueue(Context c) {
         mRequestQueue = Volley.newRequestQueue(c);
+        mCache = new GifDrawableLruCache();
     }
-
-    public void cancelRequest(final String url) {
-        mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
-            @Override
-            public boolean apply(Request<?> request) {
-                return request.getUrl().equals(url);
-            }
-        });
-
-    }
-    private AtomicInteger counter = new AtomicInteger(0);
 
     public void addRequest(final String url, final ImageView imageView) {
-        Cache.Entry d = mRequestQueue.getCache().get(url);
-        final int debugNumber = counter.getAndIncrement();
-        Log.d("GifCastTag", "Requesting: " + url + " d: " + (d==null) + " x: " + debugNumber);
+        GifDrawable cachedGif = mCache.get(url);
+        if(cachedGif != null) {
+            setGifDrawable(url, imageView, cachedGif);
+            return;
+        }
+
+        // if a request has already begun, don't add it again
+        if(mRequestedUrls.containsKey(url)) {
+            return;
+        }
+        mRequestedUrls.put(url, "");
 
         GifRequest r = new GifRequest(url, new Response.Listener<GifDrawable>() {
             @Override
             public void onResponse(GifDrawable response) {
-                Cache.Entry dd = mRequestQueue.getCache().get(url);
-                Log.d("GifCastTag", "onResponse: " + url + " d: " + (dd==null)+ " x: " + debugNumber);
-
-                imageView.setImageDrawable(response);
+                setGifDrawable(url, imageView, response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -53,5 +49,17 @@ public class CachedRequestQueue {
             }
         });
         mRequestQueue.add(r);
+    }
+
+    private void setGifDrawable(String url, ImageView imageView, GifDrawable gif) {
+        mCache.put(url, gif);
+        mRequestedUrls.remove(url);
+
+        String imageViewUrl = (String)imageView.getTag();
+        if(!TextUtils.isEmpty(imageViewUrl) && imageViewUrl.equals(url)) {
+            imageView.setImageDrawable(gif);
+        } else {
+            Log.d("GifCastTag", "Not setting: " + url + " because " + imageViewUrl);
+        }
     }
 }

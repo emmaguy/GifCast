@@ -51,7 +51,7 @@ public class ImageDetailActivity extends Activity {
             try {
                 mPlaceholderGif = new GifDrawable(getAssets(), "spinner.gif");
             } catch (IOException e) {
-                Log.e("Emma", "Failed to create placeholder gif");
+                Log.e("GifCastTag", "Failed to create placeholder gif");
             }
         }
     }

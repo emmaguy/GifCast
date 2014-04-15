@@ -117,7 +117,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
                                     @Override
                                     public void failure(RetrofitError error) {
-                                        Log.d("Emma", "Error in gallery: " + url + " msg: " + error.getMessage());
+                                        Log.d("GifCastTag", "Error in gallery: " + url + " msg: " + error.getMessage());
                                     }
                                 });
                             } else {
@@ -134,13 +134,13 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
                                     @Override
                                     public void failure(RetrofitError error) {
-                                        Log.d("Emma", "Error getting single imgur link: + " + error.getMessage());
+                                        Log.d("GifCastTag", "Error getting single imgur link: + " + error.getMessage());
                                     }
                                 });
                             }
 
                         } else {
-                            Log.d("GifCast", "Ignoring url: " + url);
+                            Log.d("GifCastTag", "Ignoring url: " + url);
                         }
                     }
 
@@ -149,7 +149,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
                 @Override
                 public void failure(RetrofitError error) {
-                    Log.e("Emma", error.getMessage(), error);
+                    Log.e("GifCastTag", error.getMessage(), error);
 
                     if(mActivity == null) return;
 

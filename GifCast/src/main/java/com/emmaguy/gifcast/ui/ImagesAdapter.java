@@ -58,26 +58,21 @@ public class ImagesAdapter extends BaseAdapter {
             viewHolder = (ViewHolder)view.getTag();
             viewHolder.imageView.setImageDrawable(null);
             viewHolder.textView.setText(null);
-
-            // cancel the request for the old cell
-//            if(viewHolder.image.getNumberOfImages() > 0) {
-//                mRequestQueue.cancelRequest(viewHolder.image.thumbnailUrl());
-//            }
         }
 
         // update the Image object for this cell
-        viewHolder.image = images.get(position);
+        Image image = images.get(position);
 
-        if(viewHolder.image.getNumberOfImages() > 0) {
-            viewHolder.textView.setText(viewHolder.image.getNumberOfImages() + " " + viewHolder.image.thumbnailUrl());
-            mRequestQueue.addRequest(viewHolder.image.thumbnailUrl(), viewHolder.imageView);
+        if(image.getNumberOfImages() > 0) {
+            viewHolder.imageView.setTag(image.thumbnailUrl());
+            viewHolder.textView.setText(image.getNumberOfImages() + " " + image.thumbnailUrl());
+            mRequestQueue.addRequest(image.thumbnailUrl(), viewHolder.imageView);
         }
 
         return view;
     }
 
     private class ViewHolder {
-        public Image image;
         public ImageView imageView;
         public TextView textView;
     }
