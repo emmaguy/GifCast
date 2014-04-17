@@ -29,6 +29,7 @@ public class ImageDetailActivity extends Activity {
 
             final GifImageView imageView = new GifImageView(this);
             imageView.setImageResource(R.drawable.animated_progress);
+            imageView.setTag(urls[i]);
 
             ((GifCastApplication)getApplication()).getRequestQueue().addRequest(urls[i], imageView);
 
