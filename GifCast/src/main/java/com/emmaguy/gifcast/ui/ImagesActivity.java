@@ -20,6 +20,7 @@ import com.emmaguy.gifcast.data.api.LatestImagesRedditService;
 import com.emmaguy.gifcast.data.model.ImgurGalleryJson;
 import com.emmaguy.gifcast.data.model.ImgurJson;
 import com.emmaguy.gifcast.data.model.RedditNewImagesJson;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,10 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
         mImagesLoader.setTargetActivity(this);
         mImagesLoader.load(getApp(), null, null);
+
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintColor(getResources().getColor(R.color.hot_pink));
     }
 
     private GifCastApplication getApp() {

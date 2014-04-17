@@ -67,7 +67,8 @@ public class ImagesAdapter extends BaseAdapter {
             viewHolder.imageView.setTag(image.thumbnailUrl());
             viewHolder.textView.setText(image.getNumberOfImages() + " " + image.thumbnailUrl());
             viewHolder.title.setText(image.getTitle());
-            //mRequestQueue.addRequest(image.thumbnailUrl(), viewHolder.imageView);
+
+            mRequestQueue.addRequest(image.thumbnailUrl(), viewHolder.imageView);
         }
 
         return view;

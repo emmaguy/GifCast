@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 
 import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.R;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import pl.droidsonroids.gif.GifImageView;
 
@@ -39,5 +40,9 @@ public class ImageDetailActivity extends Activity {
 
             linearLayout.addView(imageView, 0, params);
         }
+
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintColor(getResources().getColor(R.color.hot_pink));
     }
 }
