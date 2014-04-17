@@ -4,9 +4,36 @@
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}">
 
-    <GridView android:id="@+id/gridview"
-        android:numColumns="@integer/grid_rows"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="left"
+        android:id="@+id/footer"
+        android:paddingLeft="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:src="@drawable/animated_progress"/>
+
+        <TextView
+            android:id="@+id/footer_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/footer"
+        android:numColumns="@integer/grid_rows" />
 
 </RelativeLayout>

@@ -33,6 +33,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     private final NewRedditImagesLoader mImagesLoader = new NewRedditImagesLoader();
 
     private GridView mGridView;
+    private View mLoadingFooter;
     private ImagesAdapter mAdapter;
 
     @Override
@@ -40,15 +41,18 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images);
 
+        mLoadingFooter = findViewById(R.id.footer);
         mGridView = (GridView) findViewById(R.id.gridview);
         mAdapter = new ImagesAdapter(this, getApp().getRequestQueue());
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(this);
-        mGridView.setOnScrollListener(new EndlessScrollListener() {
+        mGridView.setOnScrollListener(new EndlessScrollListener(1) {
 
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
+
+                mLoadingFooter.setVisibility(View.VISIBLE);
 
                 String afterId = ((Image)mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
                 mImagesLoader.load(getApp(), "", afterId);
@@ -145,7 +149,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
                                     @Override
                                     public void failure(RetrofitError error) {
-                                        Log.d("GifCastTag", "Error getting single imgur link: + " + error.getMessage());
+                                        Log.d("GifCastTag", "Error getting single imgur link: " + error.getMessage() + " url: " + url);
                                     }
                                 });
                             }
@@ -156,6 +160,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                     }
 
                     mActivity.mAdapter.addImageUrls(urls);
+                    mActivity.mLoadingFooter.setVisibility(View.GONE);
                 }
 
                 @Override
