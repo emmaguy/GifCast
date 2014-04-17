@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.emmaguy.gifcast.EndlessScrollListener;
 import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.ImgurUrlParser;
 import com.emmaguy.gifcast.R;
@@ -43,9 +44,19 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mAdapter = new ImagesAdapter(this, getApp().getRequestQueue());
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(this);
+        mGridView.setOnScrollListener(new EndlessScrollListener() {
+
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
+
+                String afterId = ((Image)mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
+                mImagesLoader.load(getApp(), "", afterId);
+            }
+        });
 
         mImagesLoader.setTargetActivity(this);
-        mImagesLoader.load(getApp());
+        mImagesLoader.load(getApp(), null, null);
     }
 
     private GifCastApplication getApp() {
@@ -84,11 +95,11 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             mActivity = a;
         }
 
-        public void load(GifCastApplication app) {
+        public void load(final GifCastApplication app, final String before, final String after) {
             final ImgurService imgurService = app.getImgurService();
 
             LatestImagesRedditService imagesService = app.getLatestImagesRedditService();
-            imagesService.getNewImagesInSubreddit("gifs", new Callback<RedditNewImagesJson>() {
+            imagesService.getNewImagesInSubreddit("gifs", 20, before, after, new Callback<RedditNewImagesJson>() {
                 @Override
                 public void success(RedditNewImagesJson data, Response response) {
                     if(mActivity == null || data == null || data.data == null || data.data.children == null) return;
@@ -98,13 +109,13 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                         final String url = i.data.url;
 
                         if(isImage(url)) {
-                            urls.add(new Image(url));
+                            urls.add(new Image(i.data.name, i.data.title));
                         } else if(mImgurUrlParser.isImgurUrl(url)) {
 
                             final String imgurUrl = mImgurUrlParser.parseUrl(url);
                             if(mImgurUrlParser.isImgurGallery(url)) {
 
-                                final Image galleryImg = new Image();
+                                final Image galleryImg = new Image(i.data.name, i.data.title);
                                 urls.add(galleryImg);
                                 imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
                                     @Override
@@ -121,7 +132,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                                     }
                                 });
                             } else {
-                                final Image image = new Image();
+                                final Image image = new Image(i.data.name, i.data.title);
                                 urls.add(image);
                                 imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
                                     @Override
@@ -144,7 +155,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                         }
                     }
 
-                    mActivity.mAdapter.setImageUrls(urls);
+                    mActivity.mAdapter.addImageUrls(urls);
                 }
 
                 @Override

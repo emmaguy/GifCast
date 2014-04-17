@@ -35,7 +35,7 @@ public class GifCastApplication extends Application {
                 })
                 .setConverter(new GsonConverter(new GsonBuilder().registerTypeAdapter(ImgurGalleryJson.class, new ImgurGalleryJsonDeserializer()).create()))
                 //.setLogLevel(RestAdapter.LogLevel.FULL)
-                //.setLog(new AndroidLog("Emma-Retrofit"))
+                //.setLog(new AndroidLog("GifCastTag-Retrofit"))
                 .build();
 
         mImgurService = imgurRestAdapter.create(ImgurService.class);

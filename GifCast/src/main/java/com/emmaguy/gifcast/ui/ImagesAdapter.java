@@ -11,25 +11,23 @@ import android.widget.TextView;
 import com.emmaguy.gifcast.CachedRequestQueue;
 import com.emmaguy.gifcast.R;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImagesAdapter extends BaseAdapter {
 
     private final LayoutInflater mViewInflater;
-    private final Context mContext;
     private final CachedRequestQueue mRequestQueue;
 
-    private List<Image> images = Collections.emptyList();
+    private final List<Image> images = new ArrayList<Image>();
 
     public ImagesAdapter(Context context, CachedRequestQueue requestQueue) {
         mRequestQueue = requestQueue;
-        mContext = context;
         mViewInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setImageUrls(List<Image> images) {
-        this.images = images;
+    public void addImageUrls(List<Image> images) {
+        this.images.addAll(images);
 
         notifyDataSetChanged();
     }
@@ -53,11 +51,13 @@ public class ImagesAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.imageView = (ImageView) view.findViewById(R.id.imageview);;
             viewHolder.textView = (TextView) view.findViewById(R.id.textview);
+            viewHolder.title = (TextView) view.findViewById(R.id.title);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder)view.getTag();
             viewHolder.imageView.setImageDrawable(null);
             viewHolder.textView.setText(null);
+            viewHolder.title.setText(null);
         }
 
         // update the Image object for this cell
@@ -66,7 +66,8 @@ public class ImagesAdapter extends BaseAdapter {
         if(image.getNumberOfImages() > 0) {
             viewHolder.imageView.setTag(image.thumbnailUrl());
             viewHolder.textView.setText(image.getNumberOfImages() + " " + image.thumbnailUrl());
-            mRequestQueue.addRequest(image.thumbnailUrl(), viewHolder.imageView);
+            viewHolder.title.setText(image.getTitle());
+            //mRequestQueue.addRequest(image.thumbnailUrl(), viewHolder.imageView);
         }
 
         return view;
@@ -75,5 +76,6 @@ public class ImagesAdapter extends BaseAdapter {
     private class ViewHolder {
         public ImageView imageView;
         public TextView textView;
+        public TextView title;
     }
 }

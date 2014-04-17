@@ -4,35 +4,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Image {
-    public List<String> urls;
+    private final String mTitle;
+    private final String mRedditId;
+    public List<String> mUrls;
 
-    public Image() {
-        urls = new ArrayList<String>();
-    }
+    public Image(final String id, final String title) {
+        mUrls = new ArrayList<String>();
 
-    public Image(final String url) {
-        urls = new ArrayList<String>();
-        urls.add(url);
+        mRedditId = id;
+        mTitle = title;
     }
 
     public void updateUrl(String url) {
-        urls.clear();
-        urls.add(url);
+        mUrls.clear();
+        mUrls.add(url);
     }
 
     public void updateUrls(List<String> urls) {
-        this.urls = urls;
+        this.mUrls = urls;
     }
 
     public String thumbnailUrl() {
-        return urls.get(0);
+        return mUrls.get(0);
     }
 
     public int getNumberOfImages() {
-        return urls.size();
+        return mUrls.size();
     }
 
     public String[] getImageUrls() {
-        return urls.toArray(new String[urls.size()]);
+        return mUrls.toArray(new String[mUrls.size()]);
+    }
+
+    public String getRedditId() {
+        return mRedditId;
+    }
+
+    public String getTitle() {
+        return mTitle;
     }
 }

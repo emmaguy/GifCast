@@ -5,8 +5,13 @@ import com.emmaguy.gifcast.data.model.RedditNewImagesJson;
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 public interface LatestImagesRedditService {
-    @GET("/r/{subreddit}/new.json?sort=new&limit=20")
-    void getNewImagesInSubreddit(@Path("subreddit") String subreddit, Callback<RedditNewImagesJson> callback);
+    @GET("/r/{subreddit}/new.json?sort=new")
+    void getNewImagesInSubreddit(@Path("subreddit") String subreddit,
+                                 @Query("limit") Integer limit,
+                                 @Query("before") String before,
+                                 @Query("after") String after,
+                                 Callback<RedditNewImagesJson> callback);
 }
