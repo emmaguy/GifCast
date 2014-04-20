@@ -118,7 +118,9 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                         final String url = i.data.url;
 
                         if(isImage(url)) {
-                            urls.add(new Image(i.data.name, i.data.title));
+                            Image img = new Image(i.data.name, i.data.title);
+                            img.updateUrl(url);
+                            urls.add(img);
                         } else if(mImgurUrlParser.isImgurUrl(url)) {
 
                             final String imgurUrl = mImgurUrlParser.parseUrl(url);
