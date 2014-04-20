@@ -48,7 +48,14 @@ public class CachedRequestQueue {
                 Log.e("GifCastTag", "Failed to get gif drawable: " + error.getMessage(), error);
             }
         });
+
+        r.setTag(url);
         mRequestQueue.add(r);
+    }
+
+    public void cancelRequest(final String url) {
+        mRequestedUrls.remove(url);
+        mRequestQueue.cancelAll(url);
     }
 
     private void setGifDrawable(String url, ImageView imageView, GifDrawable gif) {

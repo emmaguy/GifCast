@@ -35,7 +35,7 @@ public class ImageDetailActivity extends Activity {
             ((GifCastApplication)getApplication()).getRequestQueue().addRequest(urls[i], imageView);
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT);
 
             linearLayout.addView(imageView, 0, params);

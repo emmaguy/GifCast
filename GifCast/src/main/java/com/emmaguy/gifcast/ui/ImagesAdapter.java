@@ -55,6 +55,14 @@ public class ImagesAdapter extends BaseAdapter {
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder)view.getTag();
+
+            if(viewHolder.imageView.getTag() != null) {
+                String oldUrl = viewHolder.imageView.getTag().toString();
+                mRequestQueue.cancelRequest(oldUrl);
+
+                viewHolder.imageView.setTag(null);
+            }
+
             viewHolder.imageView.setImageDrawable(null);
             viewHolder.textView.setText(null);
             viewHolder.title.setText(null);
