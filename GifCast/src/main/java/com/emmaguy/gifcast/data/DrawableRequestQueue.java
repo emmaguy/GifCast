@@ -62,13 +62,13 @@ public class DrawableRequestQueue {
         mRequestQueue.cancelAll(url);
     }
 
-    private void setDrawable(String url, ImageView imageView, Drawable gif) {
-        mCache.put(url, gif);
+    private void setDrawable(String url, ImageView imageView, Drawable drawable) {
+        mCache.put(url, drawable);
         mRequestedUrls.remove(url);
 
         String imageViewUrl = (String)imageView.getTag();
         if(!TextUtils.isEmpty(imageViewUrl) && imageViewUrl.equals(url)) {
-            imageView.setImageDrawable(gif);
+            imageView.setImageDrawable(drawable);
         } else {
             Log.d("GifCastTag", "Not setting: " + url + " because " + imageViewUrl);
         }

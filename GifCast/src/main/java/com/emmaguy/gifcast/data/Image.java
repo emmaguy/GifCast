@@ -62,4 +62,8 @@ public class Image {
     public void setThumbnailUrl(String thumbnailUrl) {
         mThumbnailUrl = thumbnailUrl;
     }
+
+    public boolean hasThumbnail() {
+        return !TextUtils.isEmpty(mThumbnailUrl) || mUrls.size() > 0;
+    }
 }

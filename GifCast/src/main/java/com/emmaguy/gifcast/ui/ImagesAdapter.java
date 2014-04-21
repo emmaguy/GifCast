@@ -1,6 +1,7 @@
 package com.emmaguy.gifcast.ui;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,12 +78,14 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         // update the Image object for this cell
         Image image = mFilteredImages.get(position);
 
-        if(image.getNumberOfImages() > 0) {
+        if(image.hasThumbnail()) {
             viewHolder.imageView.setTag(image.thumbnailUrl());
-            viewHolder.textView.setText(image.getNumberOfImages() + " " + image.thumbnailUrl());
+            viewHolder.textView.setText(image.thumbnailUrl());
             viewHolder.title.setText(image.getTitle());
 
             mRequestQueue.addRequest(image.thumbnailUrl(), viewHolder.imageView);
+        } else {
+            Log.d("GifCastTag", "not setting: " + position + " ");
         }
 
         return view;

@@ -185,6 +185,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                     if (mActivity == null || imgurJson == null) return;
 
                     img.updateUrl(imgurJson.data.link);
+                    mActivity.mAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -201,6 +202,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                     if (mActivity == null || imgurGalleryJson == null) return;
 
                     img.updateUrls(imgurGalleryJson.data);
+                    mActivity.mAdapter.notifyDataSetChanged();
                 }
 
                 @Override
