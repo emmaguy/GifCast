@@ -3,6 +3,7 @@ package com.emmaguy.gifcast.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,16 +12,16 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.emmaguy.gifcast.R;
 import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.data.Image;
-import com.emmaguy.gifcast.util.ImgurUrlParser;
-import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.util.Utils;
 import com.emmaguy.gifcast.data.api.ImgurService;
 import com.emmaguy.gifcast.data.api.LatestImagesRedditService;
 import com.emmaguy.gifcast.data.api.model.ImgurGalleryJson;
 import com.emmaguy.gifcast.data.api.model.ImgurJson;
 import com.emmaguy.gifcast.data.api.model.RedditNewImagesJson;
+import com.emmaguy.gifcast.util.ImgurUrlParser;
+import com.emmaguy.gifcast.util.Utils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import retrofit.client.Response;
 
 public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener {
 
+    private static String[] mSubReddits = new String[]{"gifs", "pics", "earthporn", "itookapicture", "exposureporn"};
     private final NewRedditImagesLoader mImagesLoader = new NewRedditImagesLoader();
 
     private GridView mGridView;
@@ -56,7 +58,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
                 mLoadingFooter.setVisibility(View.VISIBLE);
 
-                String afterId = ((Image)mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
+                String afterId = ((Image) mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
                 mImagesLoader.load(getApp(), "", afterId);
             }
         });
@@ -105,7 +107,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Image img = (Image)mAdapter.getItem(i);
+        Image img = (Image) mAdapter.getItem(i);
 
         Intent intent = new Intent(this, ImageDetailActivity.class);
         intent.putExtra("title", img.getTitle());
@@ -125,10 +127,11 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             final ImgurService imgurService = app.getImgurService();
 
             LatestImagesRedditService imagesService = app.getLatestImagesRedditService();
-            imagesService.getNewImagesInSubreddit("gifs+earthporn", 20, before, after, new Callback<RedditNewImagesJson>() {
+            imagesService.getNewImagesInSubreddit(TextUtils.join("+", mSubReddits), 20, before, after, new Callback<RedditNewImagesJson>() {
                 @Override
                 public void success(RedditNewImagesJson data, Response response) {
-                    if(mActivity == null || data == null || data.data == null || data.data.children == null) return;
+                    if (mActivity == null || data == null || data.data == null || data.data.children == null)
+                        return;
 
                     List<Image> images = getImages(data.data.children, imgurService);
 
@@ -140,7 +143,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                 public void failure(RetrofitError error) {
                     Log.e("GifCastTag", error.getMessage(), error);
 
-                    if(mActivity == null) return;
+                    if (mActivity == null) return;
 
                     Toast.makeText(mActivity, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -150,23 +153,24 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         private List<Image> getImages(List<RedditNewImagesJson.RedditData.RedditImageData> data, ImgurService imgurService) {
             List<Image> images = new ArrayList<Image>();
 
-            for(RedditNewImagesJson.RedditData.RedditImageData i : data) {
+            for (RedditNewImagesJson.RedditData.RedditImageData i : data) {
                 final String url = i.data.url;
 
                 final Image img = new Image(i.data.name, i.data.title, i.data.over_18);
                 img.setThumbnailUrl(i.data.thumbnail);
-                images.add(img);
 
-                if(Utils.isImage(url)) {
+                if (Utils.isImage(url)) {
                     img.updateUrl(url);
-                } else if(mImgurUrlParser.isImgurUrl(url)) {
+                    images.add(img);
+                } else if (mImgurUrlParser.isImgurUrl(url)) {
                     final String imgurUrl = mImgurUrlParser.parseUrl(url);
 
-                    if(mImgurUrlParser.isImgurGallery(url)) {
+                    if (mImgurUrlParser.isImgurGallery(url)) {
                         requestImgurGalleryImages(imgurService, url, img, imgurUrl);
                     } else {
                         requestImgurImage(imgurService, url, img, imgurUrl);
                     }
+                    images.add(img);
                 } else {
                     Log.d("GifCastTag", "Ignoring url: " + url);
                 }
@@ -178,7 +182,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
                 @Override
                 public void success(ImgurJson imgurJson, Response response) {
-                    if(mActivity == null || imgurJson == null) return;
+                    if (mActivity == null || imgurJson == null) return;
 
                     img.updateUrl(imgurJson.data.link);
                 }
@@ -194,7 +198,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
                 @Override
                 public void success(ImgurGalleryJson imgurGalleryJson, Response response) {
-                    if(mActivity == null || imgurGalleryJson == null) return;
+                    if (mActivity == null || imgurGalleryJson == null) return;
 
                     img.updateUrls(imgurGalleryJson.data);
                 }
