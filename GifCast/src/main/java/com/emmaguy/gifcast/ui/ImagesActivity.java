@@ -124,32 +124,30 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             final ImgurService imgurService = app.getImgurService();
 
             LatestImagesRedditService imagesService = app.getLatestImagesRedditService();
-            imagesService.getNewImagesInSubreddit("gifs", 20, before, after, new Callback<RedditNewImagesJson>() {
+            imagesService.getNewImagesInSubreddit("gifs+earthporn", 20, before, after, new Callback<RedditNewImagesJson>() {
                 @Override
                 public void success(RedditNewImagesJson data, Response response) {
                     if(mActivity == null || data == null || data.data == null || data.data.children == null) return;
 
-                    List<Image> urls = new ArrayList<Image>();
+                    List<Image> images = new ArrayList<Image>();
                     for(RedditNewImagesJson.RedditData.RedditImageData i : data.data.children) {
                         final String url = i.data.url;
+                        final Image img = new Image(i.data.name, i.data.title, i.data.over_18);
+                        img.setThumbnailUrl(i.data.thumbnail);
+                        images.add(img);
 
                         if(isImage(url)) {
-                            Image img = new Image(i.data.name, i.data.title, i.data.over_18);
                             img.updateUrl(url);
-                            urls.add(img);
                         } else if(mImgurUrlParser.isImgurUrl(url)) {
 
                             final String imgurUrl = mImgurUrlParser.parseUrl(url);
                             if(mImgurUrlParser.isImgurGallery(url)) {
-
-                                final Image galleryImg = new Image(i.data.name, i.data.title, i.data.over_18);
-                                urls.add(galleryImg);
                                 imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
                                     @Override
                                     public void success(ImgurGalleryJson imgurGalleryJson, Response response) {
                                         if(mActivity == null || imgurGalleryJson == null) return;
 
-                                        galleryImg.updateUrls(imgurGalleryJson.data);
+                                        img.updateUrls(imgurGalleryJson.data);
                                         mActivity.mAdapter.notifyDataSetChanged();
                                     }
 
@@ -159,14 +157,12 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                                     }
                                 });
                             } else {
-                                final Image image = new Image(i.data.name, i.data.title, i.data.over_18);
-                                urls.add(image);
                                 imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
                                     @Override
                                     public void success(ImgurJson imgurJson, Response response) {
                                         if(mActivity == null || imgurJson == null) return;
 
-                                        image.updateUrl(imgurJson.data.link);
+                                        img.updateUrl(imgurJson.data.link);
                                         mActivity.mAdapter.notifyDataSetChanged();
                                     }
 
@@ -182,7 +178,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                         }
                     }
 
-                    mActivity.mAdapter.addImageUrls(urls);
+                    mActivity.mAdapter.addImageUrls(images);
                     mActivity.mLoadingFooter.setVisibility(View.GONE);
                 }
 

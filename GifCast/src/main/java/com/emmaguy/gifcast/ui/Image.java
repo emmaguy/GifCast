@@ -1,5 +1,7 @@
 package com.emmaguy.gifcast.ui;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,8 @@ public class Image {
     private final String mTitle;
     private final String mRedditId;
     private final boolean mIsNSFW;
+
+    private String mThumbnailUrl;
 
     public List<String> mUrls;
 
@@ -28,6 +32,10 @@ public class Image {
     }
 
     public String thumbnailUrl() {
+        if(!TextUtils.isEmpty(mThumbnailUrl)) {
+            return mThumbnailUrl;
+        }
+
         return mUrls.get(0);
     }
 
@@ -49,5 +57,9 @@ public class Image {
 
     public boolean isNSFW() {
         return mIsNSFW;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        mThumbnailUrl = thumbnailUrl;
     }
 }
