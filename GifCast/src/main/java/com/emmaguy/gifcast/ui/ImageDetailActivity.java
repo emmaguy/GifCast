@@ -3,13 +3,12 @@ package com.emmaguy.gifcast.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.R;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-
-import pl.droidsonroids.gif.GifImageView;
 
 
 public class ImageDetailActivity extends Activity {
@@ -28,7 +27,7 @@ public class ImageDetailActivity extends Activity {
 
         for(int i = urls.length - 1; i >= 0; i--) {
 
-            final GifImageView imageView = new GifImageView(this);
+            final ImageView imageView = new ImageView(this);
             imageView.setImageResource(R.drawable.animated_progress);
             imageView.setTag(urls[i]);
 
