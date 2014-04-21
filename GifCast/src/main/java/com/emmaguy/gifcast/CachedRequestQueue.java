@@ -1,6 +1,7 @@
 package com.emmaguy.gifcast;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
@@ -17,22 +18,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-import pl.droidsonroids.gif.GifDrawable;
-
 public class CachedRequestQueue {
     private RequestQueue mRequestQueue;
-    private GifDrawableLruCache mCache;
+    private DrawableLruCache mCache;
     private HashMap<String, String> mRequestedUrls = new HashMap<String, String>();
 
     public CachedRequestQueue(Context c) {
         mRequestQueue = Volley.newRequestQueue(c, new OkHttpStack());
-        mCache = new GifDrawableLruCache();
+        mCache = new DrawableLruCache();
     }
 
     public void addRequest(final String url, final ImageView imageView) {
-        GifDrawable cachedGif = mCache.get(url);
+        Drawable cachedGif = mCache.get(url);
         if(cachedGif != null) {
-            setGifDrawable(url, imageView, cachedGif);
+            setDrawable(url, imageView, cachedGif);
             return;
         }
 
@@ -42,15 +41,15 @@ public class CachedRequestQueue {
         }
         mRequestedUrls.put(url, "");
 
-        GifRequest r = new GifRequest(url, new Response.Listener<GifDrawable>() {
+        DrawableRequest r = new DrawableRequest(url, new Response.Listener<Drawable>() {
             @Override
-            public void onResponse(GifDrawable response) {
-                setGifDrawable(url, imageView, response);
+            public void onResponse(Drawable response) {
+                setDrawable(url, imageView, response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("GifCastTag", "Failed to get gif drawable: " + error.getMessage(), error);
+                Log.e("GifCastTag", "Failed to get drawable: " + error.getMessage(), error);
             }
         });
 
@@ -63,7 +62,7 @@ public class CachedRequestQueue {
         mRequestQueue.cancelAll(url);
     }
 
-    private void setGifDrawable(String url, ImageView imageView, GifDrawable gif) {
+    private void setDrawable(String url, ImageView imageView, Drawable gif) {
         mCache.put(url, gif);
         mRequestedUrls.remove(url);
 

@@ -15,6 +15,7 @@ import com.emmaguy.gifcast.EndlessScrollListener;
 import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.ImgurUrlParser;
 import com.emmaguy.gifcast.R;
+import com.emmaguy.gifcast.Utils;
 import com.emmaguy.gifcast.data.api.ImgurService;
 import com.emmaguy.gifcast.data.api.LatestImagesRedditService;
 import com.emmaguy.gifcast.data.model.ImgurGalleryJson;
@@ -136,7 +137,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                         img.setThumbnailUrl(i.data.thumbnail);
                         images.add(img);
 
-                        if(isImage(url)) {
+                        if(Utils.isImage(url)) {
                             img.updateUrl(url);
                         } else if(mImgurUrlParser.isImgurUrl(url)) {
 
@@ -191,13 +192,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                     Toast.makeText(mActivity, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-        }
-
-        private static boolean isImage(String pictureFileName) {
-            return pictureFileName.endsWith(".png")
-                    || pictureFileName.endsWith(".gif")
-                    || pictureFileName.endsWith(".jpg")
-                    || pictureFileName.endsWith(".jpeg");
         }
     }
 }

@@ -1,15 +1,14 @@
 package com.emmaguy.gifcast;
 
+import android.graphics.drawable.Drawable;
 import android.util.LruCache;
 
-import pl.droidsonroids.gif.GifDrawable;
-
-public class GifDrawableLruCache extends LruCache<String, GifDrawable> {
-    public GifDrawableLruCache(int maxSize) {
+public class DrawableLruCache extends LruCache<String, Drawable> {
+    public DrawableLruCache(int maxSize) {
         super(getDefaultLruCacheSize());
     }
 
-    public GifDrawableLruCache() {
+    public DrawableLruCache() {
         super(getDefaultLruCacheSize());
     }
 

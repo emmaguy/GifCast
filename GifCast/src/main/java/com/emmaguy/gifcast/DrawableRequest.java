@@ -1,5 +1,8 @@
 package com.emmaguy.gifcast;
 
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -14,7 +17,7 @@ import java.io.IOException;
 
 import pl.droidsonroids.gif.GifDrawable;
 
-public class GifRequest extends Request<GifDrawable> {
+public class DrawableRequest extends Request<Drawable> {
     /** Socket timeout in milliseconds for image requests */
     private static final int IMAGE_TIMEOUT_MS = 1000;
 
@@ -27,9 +30,9 @@ public class GifRequest extends Request<GifDrawable> {
     /** Decoding lock so that we don't decode more than one image at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
 
-    private final Response.Listener<GifDrawable> mListener;
+    private final Response.Listener<Drawable> mListener;
 
-    public GifRequest(String url, Response.Listener<GifDrawable> listener, Response.ErrorListener errorListener) {
+    public DrawableRequest(String url, Response.Listener<Drawable> listener, Response.ErrorListener errorListener) {
         super(Method.GET, url, errorListener);
         setRetryPolicy(new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
         setShouldCache(true);
@@ -37,7 +40,7 @@ public class GifRequest extends Request<GifDrawable> {
     }
 
     @Override
-    protected Response<GifDrawable> parseNetworkResponse(NetworkResponse response) {
+    protected Response<Drawable> parseNetworkResponse(NetworkResponse response) {
         synchronized (sDecodeLock) {
             try {
                 return parse(response);
@@ -48,12 +51,16 @@ public class GifRequest extends Request<GifDrawable> {
         }
     }
 
-    private Response<GifDrawable> parse(NetworkResponse response) {
+    private Response<Drawable> parse(NetworkResponse response) {
         byte[] data = response.data;
-        GifDrawable d = null;
+        Drawable d = null;
 
         try {
-            d = new GifDrawable(data);
+            if(Utils.isGif(getUrl())) {
+                d = new GifDrawable(data);
+            } else {
+                d = new BitmapDrawable(BitmapFactory.decodeByteArray(data, 0, data.length));
+            }
         } catch (IOException e) {
             Log.d("GifCastTag", "Failed to get url: " + getUrl());
             return Response.error(new ParseError(response));
@@ -63,7 +70,7 @@ public class GifRequest extends Request<GifDrawable> {
     }
 
     @Override
-    protected void deliverResponse(GifDrawable response) {
+    protected void deliverResponse(Drawable response) {
         mListener.onResponse(response);
     }
 }
