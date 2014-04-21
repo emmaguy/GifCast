@@ -1,5 +1,7 @@
 package com.emmaguy.gifcast;
 
+import android.util.Log;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -53,6 +55,7 @@ public class GifRequest extends Request<GifDrawable> {
         try {
             d = new GifDrawable(data);
         } catch (IOException e) {
+            Log.d("GifCastTag", "Failed to get url: " + getUrl());
             return Response.error(new ParseError(response));
         }
 
