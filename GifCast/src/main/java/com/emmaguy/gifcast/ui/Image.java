@@ -6,13 +6,16 @@ import java.util.List;
 public class Image {
     private final String mTitle;
     private final String mRedditId;
+    private final boolean mIsNSFW;
+
     public List<String> mUrls;
 
-    public Image(final String id, final String title) {
+    public Image(final String id, final String title, final boolean isNSFW) {
         mUrls = new ArrayList<String>();
 
         mRedditId = id;
         mTitle = title;
+        mIsNSFW = isNSFW;
     }
 
     public void updateUrl(String url) {
@@ -42,5 +45,9 @@ public class Image {
 
     public String getTitle() {
         return mTitle;
+    }
+
+    public boolean isNSFW() {
+        return mIsNSFW;
     }
 }

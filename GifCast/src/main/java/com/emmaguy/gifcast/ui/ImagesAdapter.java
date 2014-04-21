@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,30 +16,33 @@ import com.emmaguy.gifcast.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImagesAdapter extends BaseAdapter {
+public class ImagesAdapter extends BaseAdapter implements Filterable {
 
     private final LayoutInflater mViewInflater;
     private final CachedRequestQueue mRequestQueue;
+    private final RedditImagesFilter mFilter;
 
-    private final List<Image> images = new ArrayList<Image>();
+    private final List<Image> mOriginalImages = new ArrayList<Image>();
+    private List<Image> mFilteredImages = new ArrayList<Image>();
 
-    public ImagesAdapter(Context context, CachedRequestQueue requestQueue) {
+    public ImagesAdapter(Context context, CachedRequestQueue requestQueue, boolean hideNSFW) {
+        mFilter = new RedditImagesFilter(hideNSFW);
         mRequestQueue = requestQueue;
         mViewInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public void addImageUrls(List<Image> images) {
-        this.images.addAll(images);
+        this.mOriginalImages.addAll(images);
 
-        notifyDataSetChanged();
+        mFilter.filter("");
     }
 
     @Override public int getCount() {
-        return images.size();
+        return mFilteredImages.size();
     }
 
     @Override public Object getItem(int position) {
-        return images.get(position);
+        return mFilteredImages.get(position);
     }
 
     @Override public long getItemId(int position) {
@@ -69,7 +74,7 @@ public class ImagesAdapter extends BaseAdapter {
         }
 
         // update the Image object for this cell
-        Image image = images.get(position);
+        Image image = mFilteredImages.get(position);
 
         if(image.getNumberOfImages() > 0) {
             viewHolder.imageView.setTag(image.thumbnailUrl());
@@ -80,6 +85,55 @@ public class ImagesAdapter extends BaseAdapter {
         }
 
         return view;
+    }
+
+    public void toggleNSFWFilter(boolean hideNSFW) {
+        mFilter.setFilterNSFW(hideNSFW);
+        mFilter.filter("");
+    }
+
+    @Override
+    public Filter getFilter() {
+        return mFilter;
+    }
+
+    private class RedditImagesFilter extends Filter {
+
+        private boolean mHideNSFW;
+
+        public RedditImagesFilter(boolean hideNSFW) {
+            mHideNSFW = hideNSFW;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            FilterResults filterResults = new FilterResults();
+
+            if(mHideNSFW) {
+                List<Image> filteredImages = new ArrayList<Image>();
+                for(Image i : mOriginalImages) {
+                    if(!i.isNSFW()) {
+                        filteredImages.add(i);
+                    }
+                }
+                filterResults.values = filteredImages;
+            }
+            else {
+                filterResults.values = mOriginalImages;
+            }
+
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            mFilteredImages = (List<Image>) filterResults.values;
+            notifyDataSetChanged();
+        }
+
+        public void setFilterNSFW(boolean filterNSFW) {
+            this.mHideNSFW = filterNSFW;
+        }
     }
 
     private class ViewHolder {

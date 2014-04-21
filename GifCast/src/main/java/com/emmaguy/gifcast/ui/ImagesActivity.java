@@ -44,7 +44,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
         mLoadingFooter = findViewById(R.id.footer);
         mGridView = (GridView) findViewById(R.id.gridview);
-        mAdapter = new ImagesAdapter(this, getApp().getRequestQueue());
+        mAdapter = new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW());
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(this);
         mGridView.setOnScrollListener(new EndlessScrollListener(1) {
@@ -72,16 +72,31 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         return (GifCastApplication) getApplication();
     }
 
+    private boolean shouldHideNSFW() {
+        return getPreferences(MODE_PRIVATE).getBoolean("hide_nsfw", true);
+    }
+
+    private void updateHideNSFW(boolean hideNSFW) {
+        getPreferences(MODE_PRIVATE).edit().putBoolean("hide_nsfw", hideNSFW).apply();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_images, menu);
+
+        menu.findItem(R.id.hide_nsfw).setChecked(shouldHideNSFW());
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.hide_nsfw) {
+            boolean shouldHideNSFW = !shouldHideNSFW();
+            updateHideNSFW(shouldHideNSFW);
+
+            mAdapter.toggleNSFWFilter(shouldHideNSFW);
+            item.setChecked(shouldHideNSFW);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -118,7 +133,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                         final String url = i.data.url;
 
                         if(isImage(url)) {
-                            Image img = new Image(i.data.name, i.data.title);
+                            Image img = new Image(i.data.name, i.data.title, i.data.over_18);
                             img.updateUrl(url);
                             urls.add(img);
                         } else if(mImgurUrlParser.isImgurUrl(url)) {
@@ -126,7 +141,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                             final String imgurUrl = mImgurUrlParser.parseUrl(url);
                             if(mImgurUrlParser.isImgurGallery(url)) {
 
-                                final Image galleryImg = new Image(i.data.name, i.data.title);
+                                final Image galleryImg = new Image(i.data.name, i.data.title, i.data.over_18);
                                 urls.add(galleryImg);
                                 imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
                                     @Override
@@ -143,7 +158,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                                     }
                                 });
                             } else {
-                                final Image image = new Image(i.data.name, i.data.title);
+                                final Image image = new Image(i.data.name, i.data.title, i.data.over_18);
                                 urls.add(image);
                                 imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
                                     @Override
