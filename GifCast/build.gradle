@@ -22,6 +22,8 @@ dependencies {
 
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.0.+'
 
+    compile 'com.squareup.okhttp:okhttp:1.5.4'
+
     compile 'com.squareup.retrofit:retrofit:1.5.0'
     compile 'com.mcxiaoke.volley:library:1.0.+'
 

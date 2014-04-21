@@ -8,8 +8,13 @@ import android.widget.ImageView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
+import com.squareup.okhttp.OkHttpClient;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 
 import pl.droidsonroids.gif.GifDrawable;
@@ -20,7 +25,7 @@ public class CachedRequestQueue {
     private HashMap<String, String> mRequestedUrls = new HashMap<String, String>();
 
     public CachedRequestQueue(Context c) {
-        mRequestQueue = Volley.newRequestQueue(c);
+        mRequestQueue = Volley.newRequestQueue(c, new OkHttpStack());
         mCache = new GifDrawableLruCache();
     }
 
@@ -67,6 +72,25 @@ public class CachedRequestQueue {
             imageView.setImageDrawable(gif);
         } else {
             Log.d("GifCastTag", "Not setting: " + url + " because " + imageViewUrl);
+        }
+    }
+
+    private class OkHttpStack extends HurlStack {
+        private final OkHttpClient client;
+
+        public OkHttpStack() {
+            this(new OkHttpClient());
+        }
+
+        public OkHttpStack(OkHttpClient client) {
+            if (client == null) {
+                throw new NullPointerException("Client must not be null.");
+            }
+            this.client = client;
+        }
+
+        @Override protected HttpURLConnection createConnection(URL url) throws IOException {
+            return client.open(url);
         }
     }
 }

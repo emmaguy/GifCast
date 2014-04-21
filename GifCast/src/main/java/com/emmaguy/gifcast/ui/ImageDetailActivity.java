@@ -3,7 +3,6 @@ package com.emmaguy.gifcast.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.emmaguy.gifcast.GifCastApplication;
