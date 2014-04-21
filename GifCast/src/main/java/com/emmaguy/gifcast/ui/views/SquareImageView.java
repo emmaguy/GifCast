@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast.ui;
+package com.emmaguy.gifcast.ui.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

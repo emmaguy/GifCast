@@ -1,6 +1,6 @@
 package com.emmaguy.gifcast.data.api;
 
-import com.emmaguy.gifcast.data.model.RedditNewImagesJson;
+import com.emmaguy.gifcast.data.api.model.RedditNewImagesJson;
 
 import retrofit.Callback;
 import retrofit.http.GET;

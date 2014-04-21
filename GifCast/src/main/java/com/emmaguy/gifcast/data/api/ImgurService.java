@@ -1,7 +1,7 @@
 package com.emmaguy.gifcast.data.api;
 
-import com.emmaguy.gifcast.data.model.ImgurGalleryJson;
-import com.emmaguy.gifcast.data.model.ImgurJson;
+import com.emmaguy.gifcast.data.api.model.ImgurGalleryJson;
+import com.emmaguy.gifcast.data.api.model.ImgurJson;
 
 import retrofit.Callback;
 import retrofit.http.GET;

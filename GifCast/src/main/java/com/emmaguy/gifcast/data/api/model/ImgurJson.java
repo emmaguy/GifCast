@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast.data.model;
+package com.emmaguy.gifcast.data.api.model;
 
 public class ImgurJson {
     public ImgurImage data;

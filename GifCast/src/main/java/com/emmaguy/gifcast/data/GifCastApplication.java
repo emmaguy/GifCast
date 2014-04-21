@@ -1,11 +1,12 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.data;
 
 import android.app.Application;
 
+import com.emmaguy.gifcast.R;
 import com.emmaguy.gifcast.data.api.ImgurService;
 import com.emmaguy.gifcast.data.api.LatestImagesRedditService;
-import com.emmaguy.gifcast.data.model.ImgurGalleryJson;
-import com.emmaguy.gifcast.data.model.ImgurGalleryJsonDeserializer;
+import com.emmaguy.gifcast.data.api.model.ImgurGalleryJson;
+import com.emmaguy.gifcast.data.api.model.ImgurGalleryJsonDeserializer;
 import com.google.gson.GsonBuilder;
 
 import retrofit.RequestInterceptor;
@@ -15,7 +16,7 @@ import retrofit.converter.GsonConverter;
 public class GifCastApplication extends Application {
     private LatestImagesRedditService mLatestImagesRedditService;
     private ImgurService mImgurService;
-    private CachedRequestQueue mRequestQueue;
+    private DrawableRequestQueue mRequestQueue;
 
     @Override public void onCreate() {
         super.onCreate();
@@ -40,10 +41,10 @@ public class GifCastApplication extends Application {
 
         mImgurService = imgurRestAdapter.create(ImgurService.class);
 
-        mRequestQueue = new CachedRequestQueue(this);
+        mRequestQueue = new DrawableRequestQueue(this);
     }
 
-    public CachedRequestQueue getRequestQueue() {
+    public DrawableRequestQueue getRequestQueue() {
         return mRequestQueue;
     }
 

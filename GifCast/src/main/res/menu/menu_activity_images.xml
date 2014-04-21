@@ -7,4 +7,5 @@
         android:title="Hide NSFW"
         android:showAsAction="never"
         android:checkable="true"/>
+
 </menu>

@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast.ui;
+package com.emmaguy.gifcast.data;
 
 import android.text.TextUtils;
 

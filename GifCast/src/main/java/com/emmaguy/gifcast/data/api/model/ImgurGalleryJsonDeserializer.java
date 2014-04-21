@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast.data.model;
+package com.emmaguy.gifcast.data.api.model;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

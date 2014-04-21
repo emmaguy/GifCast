@@ -10,8 +10,9 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.emmaguy.gifcast.CachedRequestQueue;
 import com.emmaguy.gifcast.R;
+import com.emmaguy.gifcast.data.DrawableRequestQueue;
+import com.emmaguy.gifcast.data.Image;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +20,19 @@ import java.util.List;
 public class ImagesAdapter extends BaseAdapter implements Filterable {
 
     private final LayoutInflater mViewInflater;
-    private final CachedRequestQueue mRequestQueue;
+    private final DrawableRequestQueue mRequestQueue;
     private final RedditImagesFilter mFilter;
 
     private final List<Image> mOriginalImages = new ArrayList<Image>();
     private List<Image> mFilteredImages = new ArrayList<Image>();
 
-    public ImagesAdapter(Context context, CachedRequestQueue requestQueue, boolean hideNSFW) {
+    public ImagesAdapter(Context context, DrawableRequestQueue requestQueue, boolean hideNSFW) {
         mFilter = new RedditImagesFilter(hideNSFW);
         mRequestQueue = requestQueue;
         mViewInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void addImageUrls(List<Image> images) {
+    public void addImages(List<Image> images) {
         this.mOriginalImages.addAll(images);
 
         mFilter.filter("");

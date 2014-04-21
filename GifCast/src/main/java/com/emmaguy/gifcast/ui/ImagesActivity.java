@@ -11,16 +11,16 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.emmaguy.gifcast.EndlessScrollListener;
-import com.emmaguy.gifcast.GifCastApplication;
-import com.emmaguy.gifcast.ImgurUrlParser;
+import com.emmaguy.gifcast.data.GifCastApplication;
+import com.emmaguy.gifcast.data.Image;
+import com.emmaguy.gifcast.util.ImgurUrlParser;
 import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.Utils;
+import com.emmaguy.gifcast.util.Utils;
 import com.emmaguy.gifcast.data.api.ImgurService;
 import com.emmaguy.gifcast.data.api.LatestImagesRedditService;
-import com.emmaguy.gifcast.data.model.ImgurGalleryJson;
-import com.emmaguy.gifcast.data.model.ImgurJson;
-import com.emmaguy.gifcast.data.model.RedditNewImagesJson;
+import com.emmaguy.gifcast.data.api.model.ImgurGalleryJson;
+import com.emmaguy.gifcast.data.api.model.ImgurJson;
+import com.emmaguy.gifcast.data.api.model.RedditNewImagesJson;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.util.ArrayList;
@@ -130,56 +130,9 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                 public void success(RedditNewImagesJson data, Response response) {
                     if(mActivity == null || data == null || data.data == null || data.data.children == null) return;
 
-                    List<Image> images = new ArrayList<Image>();
-                    for(RedditNewImagesJson.RedditData.RedditImageData i : data.data.children) {
-                        final String url = i.data.url;
-                        final Image img = new Image(i.data.name, i.data.title, i.data.over_18);
-                        img.setThumbnailUrl(i.data.thumbnail);
-                        images.add(img);
+                    List<Image> images = getImages(data.data.children, imgurService);
 
-                        if(Utils.isImage(url)) {
-                            img.updateUrl(url);
-                        } else if(mImgurUrlParser.isImgurUrl(url)) {
-
-                            final String imgurUrl = mImgurUrlParser.parseUrl(url);
-                            if(mImgurUrlParser.isImgurGallery(url)) {
-                                imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
-                                    @Override
-                                    public void success(ImgurGalleryJson imgurGalleryJson, Response response) {
-                                        if(mActivity == null || imgurGalleryJson == null) return;
-
-                                        img.updateUrls(imgurGalleryJson.data);
-                                        mActivity.mAdapter.notifyDataSetChanged();
-                                    }
-
-                                    @Override
-                                    public void failure(RetrofitError error) {
-                                        Log.d("GifCastTag", "Error in gallery: " + url + " msg: " + error.getMessage());
-                                    }
-                                });
-                            } else {
-                                imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
-                                    @Override
-                                    public void success(ImgurJson imgurJson, Response response) {
-                                        if(mActivity == null || imgurJson == null) return;
-
-                                        img.updateUrl(imgurJson.data.link);
-                                        mActivity.mAdapter.notifyDataSetChanged();
-                                    }
-
-                                    @Override
-                                    public void failure(RetrofitError error) {
-                                        Log.d("GifCastTag", "Error getting single imgur link: " + error.getMessage() + " url: " + url);
-                                    }
-                                });
-                            }
-
-                        } else {
-                            Log.d("GifCastTag", "Ignoring url: " + url);
-                        }
-                    }
-
-                    mActivity.mAdapter.addImageUrls(images);
+                    mActivity.mAdapter.addImages(images);
                     mActivity.mLoadingFooter.setVisibility(View.GONE);
                 }
 
@@ -190,6 +143,65 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                     if(mActivity == null) return;
 
                     Toast.makeText(mActivity, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        private List<Image> getImages(List<RedditNewImagesJson.RedditData.RedditImageData> data, ImgurService imgurService) {
+            List<Image> images = new ArrayList<Image>();
+
+            for(RedditNewImagesJson.RedditData.RedditImageData i : data) {
+                final String url = i.data.url;
+
+                final Image img = new Image(i.data.name, i.data.title, i.data.over_18);
+                img.setThumbnailUrl(i.data.thumbnail);
+                images.add(img);
+
+                if(Utils.isImage(url)) {
+                    img.updateUrl(url);
+                } else if(mImgurUrlParser.isImgurUrl(url)) {
+                    final String imgurUrl = mImgurUrlParser.parseUrl(url);
+
+                    if(mImgurUrlParser.isImgurGallery(url)) {
+                        requestImgurGalleryImages(imgurService, url, img, imgurUrl);
+                    } else {
+                        requestImgurImage(imgurService, url, img, imgurUrl);
+                    }
+                } else {
+                    Log.d("GifCastTag", "Ignoring url: " + url);
+                }
+            }
+            return images;
+        }
+
+        private void requestImgurImage(ImgurService imgurService, final String url, final Image img, String imgurUrl) {
+            imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
+                @Override
+                public void success(ImgurJson imgurJson, Response response) {
+                    if(mActivity == null || imgurJson == null) return;
+
+                    img.updateUrl(imgurJson.data.link);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.d("GifCastTag", "Error getting single imgur link: " + error.getMessage() + " url: " + url);
+                }
+            });
+        }
+
+        private void requestImgurGalleryImages(ImgurService imgurService, final String url, final Image img, String imgurUrl) {
+            imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
+                @Override
+                public void success(ImgurGalleryJson imgurGalleryJson, Response response) {
+                    if(mActivity == null || imgurGalleryJson == null) return;
+
+                    img.updateUrls(imgurGalleryJson.data);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.d("GifCastTag", "Error getting imgur gallery url: " + url + " msg: " + error.getMessage());
                 }
             });
         }

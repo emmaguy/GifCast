@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.ui;
 
 import android.widget.AbsListView;
 

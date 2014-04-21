@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.data;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -18,12 +18,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-public class CachedRequestQueue {
+public class DrawableRequestQueue {
     private RequestQueue mRequestQueue;
     private DrawableLruCache mCache;
     private HashMap<String, String> mRequestedUrls = new HashMap<String, String>();
 
-    public CachedRequestQueue(Context c) {
+    public DrawableRequestQueue(Context c) {
         mRequestQueue = Volley.newRequestQueue(c, new OkHttpStack());
         mCache = new DrawableLruCache();
     }

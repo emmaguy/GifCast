@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.util;
 
 public class Utils {
     public static boolean isGif(String pictureFileName) {

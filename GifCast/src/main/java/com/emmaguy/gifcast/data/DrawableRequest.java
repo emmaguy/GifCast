@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.data;
 
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,6 +12,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.emmaguy.gifcast.util.Utils;
 
 import java.io.IOException;
 

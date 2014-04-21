@@ -3,7 +3,7 @@ package com.emmaguy.gifcast.test;
 import android.test.InstrumentationTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.emmaguy.gifcast.ImgurUrlParser;
+import com.emmaguy.gifcast.util.ImgurUrlParser;
 
 import junit.framework.Assert;
 

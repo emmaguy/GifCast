@@ -1,4 +1,4 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.data;
 
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
