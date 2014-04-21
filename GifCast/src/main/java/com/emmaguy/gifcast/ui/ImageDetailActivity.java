@@ -27,7 +27,7 @@ public class ImageDetailActivity extends Activity {
 
         for(int i = urls.length - 1; i >= 0; i--) {
 
-            final ImageView imageView = new ImageView(this);
+            final FitScreenWidthImageView imageView = new FitScreenWidthImageView(this);
             imageView.setImageResource(R.drawable.animated_progress);
             imageView.setTag(urls[i]);
 
