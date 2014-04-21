@@ -5,9 +5,11 @@ public class ImgurJson {
 
     public class ImgurImage {
         public final String link;
+        public final String title;
 
-        public ImgurImage(String link) {
+        public ImgurImage(String link, String title) {
             this.link = link;
+            this.title = title;
         }
     }
 }

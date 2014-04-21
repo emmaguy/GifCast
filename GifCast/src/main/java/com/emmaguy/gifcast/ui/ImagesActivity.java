@@ -107,6 +107,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         Image img = (Image)mAdapter.getItem(i);
 
         Intent intent = new Intent(this, ImageDetailActivity.class);
+        intent.putExtra("title", img.getTitle());
         intent.putExtra("url", img.getImageUrls());
         startActivity(intent);
     }

@@ -22,7 +22,10 @@ public class ImageDetailActivity extends Activity {
         linearLayout = (LinearLayout)findViewById(R.id.linearlayout);
 
         Bundle extras = getIntent().getExtras();
+        String title = extras.getString("title");
         String[] urls = extras.getStringArray("url");
+
+        getActionBar().setTitle(title);
 
         for(int i = urls.length - 1; i >= 0; i--) {
 
