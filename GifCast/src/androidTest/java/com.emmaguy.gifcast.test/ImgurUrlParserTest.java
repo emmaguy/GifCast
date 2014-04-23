@@ -30,10 +30,24 @@ public class ImgurUrlParserTest extends InstrumentationTestCase {
     }
 
     @SmallTest
+    public void test_parsing_imgur_album_url_succeeds() {
+        ImgurUrlParser parser = new ImgurUrlParser();
+
+        Assert.assertTrue(parser.isImgurUrl("imgur.com/a/"));
+    }
+
+    @SmallTest
     public void test_parsing_non_imgur_gallery_url_fails() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
         Assert.assertFalse(parser.isImgurUrl("twitter.com/gallery"));
+    }
+
+    @SmallTest
+    public void test_parsing_album_imgur_url_replaces_a_with_album() {
+        ImgurUrlParser parser = new ImgurUrlParser();
+
+        Assert.assertEquals("album/LRBlm", parser.parseUrl("http://imgur.com/a/LRBlm"));
     }
 
     @SmallTest
