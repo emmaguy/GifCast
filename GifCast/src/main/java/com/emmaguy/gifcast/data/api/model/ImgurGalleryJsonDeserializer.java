@@ -15,7 +15,7 @@ public class ImgurGalleryJsonDeserializer implements JsonDeserializer<ImgurGalle
         obj.data = new ArrayList<String>();
 
         JsonObject data = json.getAsJsonObject().get("data").getAsJsonObject();
-        if (data.has("is_album") && data.get("is_album").getAsBoolean()) {
+        if ((data.has("is_album") && data.get("is_album").getAsBoolean()) || data.has("images")) {
             for (JsonElement e : data.get("images").getAsJsonArray()) {
                 obj.data.add(e.getAsJsonObject().get("link").getAsString());
             }

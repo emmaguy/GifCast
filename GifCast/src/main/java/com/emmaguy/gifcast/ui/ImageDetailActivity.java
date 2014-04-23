@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.R;
+import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.ui.views.FitScreenWidthImageView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 

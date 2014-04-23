@@ -50,18 +50,18 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mAdapter = new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW());
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(this);
-        mGridView.setOnScrollListener(new EndlessScrollListener(1) {
-
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
-
-                mLoadingFooter.setVisibility(View.VISIBLE);
-
-                String afterId = ((Image) mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
-                mImagesLoader.load(getApp(), "", afterId);
-            }
-        });
+//        mGridView.setOnScrollListener(new EndlessScrollListener(1) {
+//
+//            @Override
+//            public void onLoadMore(int page, int totalItemsCount) {
+//                Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
+//
+//                mLoadingFooter.setVisibility(View.VISIBLE);
+//
+//                String afterId = ((Image) mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
+//                mImagesLoader.load(getApp(), "", afterId);
+//            }
+//        });
 
         mImagesLoader.setTargetActivity(this);
         mImagesLoader.load(getApp(), null, null);
@@ -127,7 +127,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             final ImgurService imgurService = app.getImgurService();
 
             LatestImagesRedditService imagesService = app.getLatestImagesRedditService();
-            imagesService.getNewImagesInSubreddit(TextUtils.join("+", mSubReddits), 20, before, after, new Callback<RedditNewImagesJson>() {
+            imagesService.getNewImagesInSubreddit(TextUtils.join("+", mSubReddits), 5, before, "t3_23sn8j", new Callback<RedditNewImagesJson>() {
                 @Override
                 public void success(RedditNewImagesJson data, Response response) {
                     if (mActivity == null || data == null || data.data == null || data.data.children == null)
@@ -164,8 +164,9 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                     images.add(img);
                 } else if (mImgurUrlParser.isImgurUrl(url)) {
                     final String imgurUrl = mImgurUrlParser.parseUrl(url);
-
                     if (mImgurUrlParser.isImgurGallery(url)) {
+                        requestImgurGalleryImages(imgurService, url, img, imgurUrl);
+                    } else if (mImgurUrlParser.isImgurAlbum(url)) {
                         requestImgurGalleryImages(imgurService, url, img, imgurUrl);
                     } else {
                         requestImgurImage(imgurService, url, img, imgurUrl);

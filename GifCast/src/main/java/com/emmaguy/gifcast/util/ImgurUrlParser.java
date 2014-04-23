@@ -12,8 +12,18 @@ public class ImgurUrlParser {
         return isImgurUrl(url) && url.contains("gallery");
     }
 
+    public boolean isImgurAlbum(String url) {
+        return isImgurUrl(url) && url.contains("a/");
+    }
+
     public String parseUrl(String url) {
         // strip off anything up to and including 'imgur.com/'
-        return url.substring(url.lastIndexOf(IMGUR_URL_BASE) + IMGUR_URL_BASE.length());
+        String parsedUrl = url.substring(url.lastIndexOf(IMGUR_URL_BASE) + IMGUR_URL_BASE.length());
+
+        if(isImgurAlbum(url)) {
+            parsedUrl = parsedUrl.replace("a/", "album/");
+        }
+
+        return parsedUrl;
     }
 }

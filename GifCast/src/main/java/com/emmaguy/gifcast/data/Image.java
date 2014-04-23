@@ -60,7 +60,9 @@ public class Image {
     }
 
     public void setThumbnailUrl(String thumbnailUrl) {
-        mThumbnailUrl = thumbnailUrl;
+        if(!thumbnailUrl.equals("default")) {
+            mThumbnailUrl = thumbnailUrl;
+        }
     }
 
     public boolean hasThumbnail() {
