@@ -127,7 +127,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             final ImgurService imgurService = app.getImgurService();
 
             LatestImagesRedditService imagesService = app.getLatestImagesRedditService();
-            imagesService.getNewImagesInSubreddit(TextUtils.join("+", mSubReddits), 5, before, "t3_23sn8j", new Callback<RedditNewImagesJson>() {
+            imagesService.getNewImagesInSubreddit(TextUtils.join("+", mSubReddits), 20, before, after, new Callback<RedditNewImagesJson>() {
                 @Override
                 public void success(RedditNewImagesJson data, Response response) {
                     if (mActivity == null || data == null || data.data == null || data.data.children == null)
