@@ -28,15 +28,17 @@ public class DrawableRequestQueue {
         mCache = new DrawableLruCache();
     }
 
-    public void addRequest(final String url, final ImageView imageView) {
-        Drawable cachedGif = mCache.get(url);
-        if(cachedGif != null) {
-            setDrawable(url, imageView, cachedGif);
+    public void setDrawableOrAddRequest(final String url, final ImageView imageView) {
+        Drawable drawable = mCache.get(url);
+        if(drawable != null) {
+            Log.d("GifCastTag", "found in cache: " + url);
+            imageView.setImageDrawable(drawable);
             return;
         }
 
         // if a request has already begun, don't add it again
         if(mRequestedUrls.containsKey(url)) {
+            Log.d("GifCastTag", "found existing request for: " + url);
             return;
         }
         mRequestedUrls.put(url, "");
@@ -44,30 +46,34 @@ public class DrawableRequestQueue {
         DrawableRequest r = new DrawableRequest(url, new Response.Listener<Drawable>() {
             @Override
             public void onResponse(Drawable response) {
-                setDrawable(url, imageView, response);
+                mCache.put(url, response);
+                mRequestedUrls.remove(url);
+                Log.d("GifCastTag", "saving to cache: " + url);
+
+                setDrawableIfMatchingTagUrl(url, imageView, response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("GifCastTag", "Failed to get drawable: " + error.getMessage(), error);
+                Log.e("GifCastTag", "Failed to get drawable: ", error);
             }
         });
 
         r.setTag(url);
         mRequestQueue.add(r);
+        Log.d("GifCastTag", "adding req: " + url);
     }
 
     public void cancelRequest(final String url) {
+        Log.d("GifCastTag", "cancelling: " + url);
         mRequestedUrls.remove(url);
         mRequestQueue.cancelAll(url);
     }
 
-    private void setDrawable(String url, ImageView imageView, Drawable drawable) {
-        mCache.put(url, drawable);
-        mRequestedUrls.remove(url);
-
+    private void setDrawableIfMatchingTagUrl(String url, ImageView imageView, Drawable drawable) {
         String imageViewUrl = (String)imageView.getTag();
         if(!TextUtils.isEmpty(imageViewUrl) && imageViewUrl.equals(url)) {
+            Log.d("GifCastTag", "setting: " + url);
             imageView.setImageDrawable(drawable);
         } else {
             Log.d("GifCastTag", "Not setting: " + url + " because " + imageViewUrl);

@@ -11,7 +11,7 @@
         android:src="@drawable/animated_progress"
         android:scaleType="centerCrop" />
 
-    <TextView
+    <!--<TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/title"
@@ -25,6 +25,6 @@
         android:id="@+id/textview"
         android:layout_below="@id/title"
         android:background="@android:color/darker_gray"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white"/>-->
 
 </RelativeLayout>

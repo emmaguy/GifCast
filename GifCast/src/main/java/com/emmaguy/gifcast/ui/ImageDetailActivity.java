@@ -34,7 +34,7 @@ public class ImageDetailActivity extends Activity {
             imageView.setImageResource(R.drawable.animated_progress);
             imageView.setTag(urls[i]);
 
-            ((GifCastApplication)getApplication()).getRequestQueue().addRequest(urls[i], imageView);
+            ((GifCastApplication)getApplication()).getRequestQueue().setDrawableOrAddRequest(urls[i], imageView);
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,

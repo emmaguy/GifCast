@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.emmaguy.gifcast.R;
 import com.emmaguy.gifcast.data.DrawableRequestQueue;
@@ -23,6 +22,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
     private final LayoutInflater mViewInflater;
     private final DrawableRequestQueue mRequestQueue;
     private final RedditImagesFilter mFilter;
+    private OnFilteringComplete mFilteringListener;
 
     private final List<Image> mOriginalImages = new ArrayList<Image>();
     private List<Image> mFilteredImages = new ArrayList<Image>();
@@ -33,9 +33,12 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         mViewInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    public void setFilteringCompleteListener(OnFilteringComplete listener) {
+        mFilteringListener = listener;
+    }
+
     public void addImages(List<Image> images) {
         mOriginalImages.addAll(images);
-        mFilteredImages = images;
 
         mFilter.filter("");
     }
@@ -53,40 +56,39 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override public View getView(int position, View view, ViewGroup parent) {
+        // update the Image object for this cell
+        final Image image = mFilteredImages.get(position);
+
+
         final ViewHolder viewHolder;
         if (view == null) {
             view = mViewInflater.inflate(R.layout.image_item, null);
             viewHolder = new ViewHolder();
             viewHolder.imageView = (ImageView) view.findViewById(R.id.imageview);;
-            viewHolder.textView = (TextView) view.findViewById(R.id.textview);
-            viewHolder.title = (TextView) view.findViewById(R.id.title);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder)view.getTag();
 
             if(viewHolder.imageView.getTag() != null) {
-                String oldUrl = viewHolder.imageView.getTag().toString();
-                mRequestQueue.cancelRequest(oldUrl);
-
-                viewHolder.imageView.setTag(null);
+                if(image.hasThumbnail()) {
+                    String oldUrl = viewHolder.imageView.getTag().toString();
+                    if(!oldUrl.equals(image.thumbnailUrl())) {
+                        mRequestQueue.cancelRequest(oldUrl);
+                        viewHolder.imageView.setTag(null);
+                        Log.d("GifCastTag", "index: " + position + ", removing tag url: " + oldUrl + " for: " + image.thumbnailUrl());
+                    }
+                }
             }
-
-            viewHolder.imageView.setImageDrawable(null);
-            viewHolder.textView.setText(null);
-            viewHolder.title.setText(null);
+            Log.d("GifCastTag", "resetting index: " + position);
+            viewHolder.imageView.setImageResource(R.drawable.animated_progress);
         }
-
-        // update the Image object for this cell
-        Image image = mFilteredImages.get(position);
 
         if(image.hasThumbnail()) {
             viewHolder.imageView.setTag(image.thumbnailUrl());
-            viewHolder.textView.setText(image.thumbnailUrl());
-            viewHolder.title.setText(image.getTitle());
-
-            mRequestQueue.addRequest(image.thumbnailUrl(), viewHolder.imageView);
+            Log.d("GifCastTag",  "index: " + position + ", setting tag url: " + image.thumbnailUrl());
+            mRequestQueue.setDrawableOrAddRequest(image.thumbnailUrl(), viewHolder.imageView);
         } else {
-            Log.d("GifCastTag", "not setting: " + position + " ");
+            Log.d("GifCastTag", "else thumb: " + position);
         }
 
         return view;
@@ -133,6 +135,9 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             mFilteredImages = (List<Image>) filterResults.values;
+            if(mFilteringListener != null) {
+                mFilteringListener.onFilteringComplete();
+            }
             notifyDataSetChanged();
         }
 
@@ -143,7 +148,9 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
 
     private class ViewHolder {
         public ImageView imageView;
-        public TextView textView;
-        public TextView title;
+    }
+
+    public interface OnFilteringComplete {
+        void onFilteringComplete();
     }
 }

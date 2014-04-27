@@ -27,7 +27,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     private SmoothProgressBar mProgressBar;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images);
 
@@ -46,6 +46,16 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             getApp().requestItems("", "");
         } else {
             mAdapter.addImages(images);
+            mAdapter.setFilteringCompleteListener(new ImagesAdapter.OnFilteringComplete() {
+                @Override
+                public void onFilteringComplete() {
+                    if (savedInstanceState != null) {
+                        int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
+                        mGridView.setSelection(position);
+                    }
+                    mAdapter.setFilteringCompleteListener(null);
+                }
+            });
             mAdapter.notifyDataSetChanged();
         }
 
@@ -67,11 +77,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintColor(getResources().getColor(R.color.hot_pink));
-
-        if (savedInstanceState != null) {
-            int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
-            mGridView.setSelection(position);
-        }
     }
 
     private void showAndStartAnimatingProgressBar() {
