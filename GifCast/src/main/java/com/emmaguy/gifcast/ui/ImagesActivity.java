@@ -33,7 +33,7 @@ import retrofit.client.Response;
 
 public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener {
 
-    private static String[] mSubReddits = new String[]{"gifs", "pics", "earthporn", "itookapicture", "exposureporn"};
+    private static String[] mSubReddits = new String[]{"gifs"};
     private final NewRedditImagesLoader mImagesLoader = new NewRedditImagesLoader();
 
     private GridView mGridView;
@@ -50,18 +50,18 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mAdapter = new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW());
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(this);
-//        mGridView.setOnScrollListener(new EndlessScrollListener(1) {
-//
-//            @Override
-//            public void onLoadMore(int page, int totalItemsCount) {
-//                Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
-//
-//                mLoadingFooter.setVisibility(View.VISIBLE);
-//
-//                String afterId = ((Image) mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
-//                mImagesLoader.load(getApp(), "", afterId);
-//            }
-//        });
+        mGridView.setOnScrollListener(new EndlessScrollListener(1) {
+
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
+
+                mLoadingFooter.setVisibility(View.VISIBLE);
+
+                String afterId = ((Image) mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
+                mImagesLoader.load(getApp(), "", afterId);
+            }
+        });
 
         mImagesLoader.setTargetActivity(this);
         mImagesLoader.load(getApp(), null, null);
