@@ -32,7 +32,7 @@ public class GifCastApplication extends Application {
     private DrawableRequestQueue mRequestQueue;
     private final RedditImagesLoader mImagesLoader = new RedditImagesLoader();
 
-    private static String[] mSubReddits = new String[]{"gifs"};
+    private static String[] mSubReddits = new String[]{"pics","gifs"};
 
     @Override
     public void onCreate() {
@@ -103,7 +103,7 @@ public class GifCastApplication extends Application {
             final ImgurService imgurService = app.getImgurService();
 
             LatestImagesRedditService imagesService = app.getLatestImagesRedditService();
-            imagesService.getNewImagesInSubreddit(TextUtils.join("+", mSubReddits), 10, before, after, new Callback<RedditNewImagesJson>() {
+            imagesService.getNewImagesInSubreddit(TextUtils.join("+", mSubReddits), 20, before, after, new Callback<RedditNewImagesJson>() {
                 @Override
                 public void success(RedditNewImagesJson data, Response response) {
                     if (data == null || data.data == null || data.data.children == null)
