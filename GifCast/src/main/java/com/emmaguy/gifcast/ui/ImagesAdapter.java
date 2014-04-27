@@ -70,7 +70,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
             viewHolder = (ViewHolder)view.getTag();
 
             if(viewHolder.imageView.getTag() != null) {
-                if(image.hasThumbnail()) {
+                if(image.hasUrl()) {
                     String oldUrl = viewHolder.imageView.getTag().toString();
                     if(!oldUrl.equals(image.thumbnailUrl())) {
                         mRequestQueue.cancelRequest(oldUrl);
@@ -83,7 +83,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
             viewHolder.imageView.setImageResource(R.drawable.animated_progress);
         }
 
-        if(image.hasThumbnail()) {
+        if(image.hasUrl()) {
             viewHolder.imageView.setTag(image.thumbnailUrl());
             Log.d("GifCastTag",  "index: " + position + ", setting tag url: " + image.thumbnailUrl());
             mRequestQueue.setDrawableOrAddRequest(image.thumbnailUrl(), viewHolder.imageView);

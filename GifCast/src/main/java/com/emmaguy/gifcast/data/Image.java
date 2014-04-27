@@ -39,10 +39,6 @@ public class Image {
         return mUrls.get(0);
     }
 
-    public int getNumberOfImages() {
-        return mUrls.size();
-    }
-
     public String[] getImageUrls() {
         return mUrls.toArray(new String[mUrls.size()]);
     }
@@ -65,7 +61,8 @@ public class Image {
         }
     }
 
-    public boolean hasThumbnail() {
+    public boolean hasUrl() {
+        // if the image(s) are from an imgur gallery, we might not have anything to show yet
         return !TextUtils.isEmpty(mThumbnailUrl) || mUrls.size() > 0;
     }
 }
