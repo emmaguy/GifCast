@@ -21,14 +21,6 @@
             android:padding="1dp"
             android:src="@drawable/animated_progress"/>
 
-        <TextView
-            android:id="@+id/footer_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/loading"
-            android:layout_gravity="center"
-            android:textColor="@android:color/black" />
-
     </LinearLayout>
 
     <GridView
