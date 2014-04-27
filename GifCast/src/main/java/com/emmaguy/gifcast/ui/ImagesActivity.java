@@ -42,9 +42,9 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         getApp().setImagesRequesterListener(this);
 
         if (images.size() <= 0) {
+            showAndStartAnimatingProgressBar();
             getApp().requestItems("", "");
         } else {
-            mProgressBar.progressiveStop();
             mAdapter.addImages(images);
             mAdapter.notifyDataSetChanged();
         }
@@ -56,10 +56,10 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                 Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
 
                 if (mAdapter.getCount() > 0) {
+                    showAndStartAnimatingProgressBar();
+
                     String afterId = ((Image) mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
                     getApp().requestItems("", afterId);
-                    mProgressBar.progressiveStart();
-                    mProgressBar.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -72,6 +72,11 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
             mGridView.setSelection(position);
         }
+    }
+
+    private void showAndStartAnimatingProgressBar() {
+        mProgressBar.progressiveStart();
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     private GifCastApplication getApp() {
@@ -129,6 +134,11 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     public void onNewItemsAdded(List<Image> images) {
         mAdapter.addImages(images);
         mAdapter.notifyDataSetChanged();
+
+        hideAndStopAnimatingProgressBar();
+    }
+
+    private void hideAndStopAnimatingProgressBar() {
         mProgressBar.progressiveStop();
         mProgressBar.setVisibility(View.GONE);
     }
