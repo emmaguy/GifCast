@@ -1,33 +1,23 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:background="@color/dark_grey"
     tools:context="${packageName}.${activityClass}">
 
-    <LinearLayout
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        android:id="@+id/progressbar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:gravity="left"
-        android:id="@+id/footer"
-        android:paddingLeft="10dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="1dp"
-            android:src="@drawable/animated_progress"/>
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:indeterminate="true" />
 
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/footer"
+        android:layout_height="wrap_content"
         android:numColumns="@integer/grid_rows" />
 
-</RelativeLayout>
+</LinearLayout>

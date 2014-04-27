@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<animated-rotate xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/spinner_black_76"
-    android:fromDegrees="0"
-    android:toDegrees="360"
-    android:pivotX="50%"
-    android:pivotY="50%"
-    android:repeatCount="infinite" />
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:bottom="50dp"
+        android:left="50dp"
+        android:right="50dp"
+        android:top="50dp">
+
+        <animated-rotate xmlns:android="http://schemas.android.com/apk/res/android"
+            android:drawable="@drawable/spinner_black_76"
+            android:fromDegrees="0"
+            android:pivotX="50%"
+            android:pivotY="50%"
+            android:repeatCount="infinite"
+            android:toDegrees="360" />
+    </item>
+</layer-list>

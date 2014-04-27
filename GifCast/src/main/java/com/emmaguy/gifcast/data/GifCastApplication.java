@@ -65,8 +65,8 @@ public class GifCastApplication extends Application {
         return mImagesLoader.getAllImages();
     }
 
-    public void setImagesRequsterListener(final RedditImagesLoader.OnRedditItemsChanged listener) {
-        mImagesLoader.setImagesRequsterListener(listener);
+    public void setImagesRequesterListener(final RedditImagesLoader.OnRedditItemsChanged listener) {
+        mImagesLoader.setImagesRequesterListener(listener);
     }
 
     public void requestItems(final String before, final String after) {
@@ -95,7 +95,7 @@ public class GifCastApplication extends Application {
             return mImages;
         }
 
-        public void setImagesRequsterListener(OnRedditItemsChanged listener) {
+        public void setImagesRequesterListener(OnRedditItemsChanged listener) {
             mListener = listener;
         }
 

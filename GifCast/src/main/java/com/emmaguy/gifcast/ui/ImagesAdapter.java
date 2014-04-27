@@ -34,7 +34,8 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
     }
 
     public void addImages(List<Image> images) {
-        this.mOriginalImages.addAll(images);
+        mOriginalImages.addAll(images);
+        mFilteredImages = images;
 
         mFilter.filter("");
     }

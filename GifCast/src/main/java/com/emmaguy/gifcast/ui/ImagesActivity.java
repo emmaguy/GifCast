@@ -17,40 +17,61 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.util.List;
 
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+
 public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener, GifCastApplication.RedditImagesLoader.OnRedditItemsChanged {
+    private static final String GRIDVIEW_INSTANCE_STATE = "gridview_scroll_position";
+
     private GridView mGridView;
     private ImagesAdapter mAdapter;
+    private SmoothProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images);
 
+        mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
         mAdapter = new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW());
-        mAdapter.addImages(getApp().getAllImages());
 
         mGridView.setAdapter(mAdapter);
         mGridView.setOnItemClickListener(this);
+
+        List<Image> images = getApp().getAllImages();
+        getApp().setImagesRequesterListener(this);
+
+        if (images.size() <= 0) {
+            getApp().requestItems("", "");
+        } else {
+            mProgressBar.progressiveStop();
+            mAdapter.addImages(images);
+            mAdapter.notifyDataSetChanged();
+        }
+
         mGridView.setOnScrollListener(new EndlessScrollListener(1) {
 
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
 
-                if(mAdapter.getCount() > 0) {
+                if (mAdapter.getCount() > 0) {
                     String afterId = ((Image) mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
                     getApp().requestItems("", afterId);
+                    mProgressBar.progressiveStart();
+                    mProgressBar.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        getApp().setImagesRequsterListener(this);
-        getApp().requestItems("", "");
-
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintColor(getResources().getColor(R.color.hot_pink));
+
+        if (savedInstanceState != null) {
+            int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
+            mGridView.setSelection(position);
+        }
     }
 
     private GifCastApplication getApp() {
@@ -63,6 +84,13 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     private void updateHideNSFW(boolean hideNSFW) {
         getPreferences(MODE_PRIVATE).edit().putBoolean("hide_nsfw", hideNSFW).apply();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+
+        bundle.putInt(GRIDVIEW_INSTANCE_STATE, mGridView.getFirstVisiblePosition());
     }
 
     @Override
@@ -101,6 +129,8 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     public void onNewItemsAdded(List<Image> images) {
         mAdapter.addImages(images);
         mAdapter.notifyDataSetChanged();
+        mProgressBar.progressiveStop();
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override

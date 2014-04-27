@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:clipToPadding="false"
+    android:background="@color/dark_grey"
     tools:context="com.emmaguy.gifcast.ui.ImageDetailActivity">
 
     <LinearLayout
