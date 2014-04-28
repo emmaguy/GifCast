@@ -32,7 +32,7 @@ public class Image {
     }
 
     public String thumbnailUrl() {
-        if(!TextUtils.isEmpty(mThumbnailUrl)) {
+        if(hasThumbnail()) {
             return mThumbnailUrl;
         }
 
@@ -61,8 +61,11 @@ public class Image {
         }
     }
 
+    public boolean hasThumbnail() {
+        return !TextUtils.isEmpty(mThumbnailUrl);
+    }
+
     public boolean hasUrl() {
-        // if the image(s) are from an imgur gallery, we might not have anything to show yet
-        return !TextUtils.isEmpty(mThumbnailUrl) || mUrls.size() > 0;
+        return mUrls.size() > 0;
     }
 }

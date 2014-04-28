@@ -80,6 +80,10 @@ public class DrawableRequestQueue {
         }
     }
 
+    public boolean hasImageForUrl(String url) {
+        return mCache.get(url) != null;
+    }
+
     private class OkHttpStack extends HurlStack {
         private final OkHttpClient client;
 

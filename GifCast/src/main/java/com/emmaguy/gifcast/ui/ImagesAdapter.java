@@ -43,36 +43,39 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         mFilter.filter("");
     }
 
-    @Override public int getCount() {
+    @Override
+    public int getCount() {
         return mFilteredImages.size();
     }
 
-    @Override public Object getItem(int position) {
+    @Override
+    public Object getItem(int position) {
         return mFilteredImages.get(position);
     }
 
-    @Override public long getItemId(int position) {
+    @Override
+    public long getItemId(int position) {
         return position;
     }
 
-    @Override public View getView(int position, View view, ViewGroup parent) {
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
         // update the Image object for this cell
         final Image image = mFilteredImages.get(position);
-
-
         final ViewHolder viewHolder;
         if (view == null) {
             view = mViewInflater.inflate(R.layout.image_item, null);
             viewHolder = new ViewHolder();
-            viewHolder.imageView = (ImageView) view.findViewById(R.id.imageview);;
+            viewHolder.imageView = (ImageView) view.findViewById(R.id.imageview);
+            ;
             view.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder)view.getTag();
+            viewHolder = (ViewHolder) view.getTag();
 
-            if(viewHolder.imageView.getTag() != null) {
-                if(image.hasUrl()) {
+            if (viewHolder.imageView.getTag() != null) {
+                if (image.hasUrl()) {
                     String oldUrl = viewHolder.imageView.getTag().toString();
-                    if(!oldUrl.equals(image.thumbnailUrl())) {
+                    if (!oldUrl.equals(image.thumbnailUrl())) {
                         mRequestQueue.cancelRequest(oldUrl);
                         viewHolder.imageView.setTag(null);
                         Log.d("GifCastTag", "index: " + position + ", removing tag url: " + oldUrl + " for: " + image.thumbnailUrl());
@@ -83,12 +86,29 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
             viewHolder.imageView.setImageResource(R.drawable.animated_progress);
         }
 
-        if(image.hasUrl()) {
+        if (image.hasThumbnail()) {
             viewHolder.imageView.setTag(image.thumbnailUrl());
-            Log.d("GifCastTag",  "index: " + position + ", setting tag url: " + image.thumbnailUrl());
-            mRequestQueue.setDrawableOrAddRequest(image.thumbnailUrl(), viewHolder.imageView);
-        } else {
-            Log.d("GifCastTag", "else thumb: " + position);
+            Log.d("GifCastTag", "index: " + position + ", setting tag url: " + image.thumbnailUrl());
+
+            boolean hasImage = true;
+            if(image.hasUrl()) {
+                String firstUrl = image.getImageUrls()[0];
+                if(mRequestQueue.hasImageForUrl(firstUrl)){
+                    mRequestQueue.setDrawableOrAddRequest(firstUrl, viewHolder.imageView);
+                } else {
+                    hasImage = false;
+                }
+            } else {
+                hasImage = false;
+            }
+
+            if(!hasImage) {
+                mRequestQueue.setDrawableOrAddRequest(image.thumbnailUrl(), viewHolder.imageView);
+            }
+        } else if (image.hasUrl()) {
+            // add a request for the full image too
+            String[] urls = image.getImageUrls();
+            mRequestQueue.setDrawableOrAddRequest(urls[0], viewHolder.imageView);
         }
 
         return view;
@@ -116,16 +136,15 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence charSequence) {
             FilterResults filterResults = new FilterResults();
 
-            if(mHideNSFW) {
+            if (mHideNSFW) {
                 List<Image> filteredImages = new ArrayList<Image>();
-                for(Image i : mOriginalImages) {
-                    if(!i.isNSFW()) {
+                for (Image i : mOriginalImages) {
+                    if (!i.isNSFW()) {
                         filteredImages.add(i);
                     }
                 }
                 filterResults.values = filteredImages;
-            }
-            else {
+            } else {
                 filterResults.values = mOriginalImages;
             }
 
@@ -135,7 +154,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             mFilteredImages = (List<Image>) filterResults.values;
-            if(mFilteringListener != null) {
+            if (mFilteringListener != null) {
                 mFilteringListener.onFilteringComplete();
             }
             notifyDataSetChanged();
