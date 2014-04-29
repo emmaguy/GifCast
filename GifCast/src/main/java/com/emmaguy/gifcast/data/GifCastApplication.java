@@ -32,7 +32,7 @@ public class GifCastApplication extends Application {
     private DrawableRequestQueue mRequestQueue;
     private final RedditImagesLoader mImagesLoader = new RedditImagesLoader();
 
-    private static String[] mSubReddits = new String[]{"pics","gifs"};
+    private static String[] mSubReddits = new String[]{"highres"};//"pics","gifs"
 
     @Override
     public void onCreate() {
