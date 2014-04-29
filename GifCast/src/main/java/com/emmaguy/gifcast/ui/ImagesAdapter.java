@@ -78,7 +78,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
                     if (!oldUrl.equals(image.thumbnailUrl())) {
                         mRequestQueue.cancelRequest(oldUrl);
                         viewHolder.imageView.setTag(null);
-                        Log.d("GifCastTag", "index: " + position + ", removing tag url: " + oldUrl + " for: " + image.thumbnailUrl());
+                        Log.d("GifCastTag", "reset tag index: " + position + ", removing tag url: " + oldUrl + " for: " + image.thumbnailUrl());
                     }
                 }
             }
@@ -87,14 +87,11 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         }
 
         if (image.hasThumbnail()) {
-            viewHolder.imageView.setTag(image.thumbnailUrl());
-            Log.d("GifCastTag", "index: " + position + ", setting tag url: " + image.thumbnailUrl());
-
             boolean hasImage = true;
             if(image.hasUrl()) {
                 String firstUrl = image.getImageUrls()[0];
                 if(mRequestQueue.hasImageForUrl(firstUrl)){
-                    mRequestQueue.setDrawableOrAddRequest(firstUrl, viewHolder.imageView);
+                    setDrawableOrRequest(firstUrl, viewHolder.imageView, position);
                 } else {
                     hasImage = false;
                 }
@@ -103,15 +100,23 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
             }
 
             if(!hasImage) {
-                mRequestQueue.setDrawableOrAddRequest(image.thumbnailUrl(), viewHolder.imageView);
+                setDrawableOrRequest(image.thumbnailUrl(), viewHolder.imageView, position);
             }
         } else if (image.hasUrl()) {
             // add a request for the full image too
             String[] urls = image.getImageUrls();
-            mRequestQueue.setDrawableOrAddRequest(urls[0], viewHolder.imageView);
+
+            setDrawableOrRequest(urls[0], viewHolder.imageView, position);
         }
 
+        Log.d("GifCastTag", "exiting view position: " + position + " with tag " + viewHolder.imageView.getTag());
         return view;
+    }
+
+    private void setDrawableOrRequest(String url, ImageView imageView, int position) {
+        Log.d("GifCastTag", "requesting index: " + position + ", for tag url: " + url);
+        imageView.setTag(url);
+        mRequestQueue.setDrawableOrAddRequest(url, imageView);
     }
 
     public void toggleNSFWFilter(boolean hideNSFW) {
