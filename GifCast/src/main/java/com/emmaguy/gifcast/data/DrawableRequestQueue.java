@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 public class DrawableRequestQueue {
     private final Resources mResources;
+    private OnDataChangedListener mDataChangedListener;
     private RequestQueue mRequestQueue;
     private DrawableLruCache mCache;
     private HashMap<String, String> mRequestedUrls = new HashMap<String, String>();
@@ -50,6 +51,7 @@ public class DrawableRequestQueue {
             @Override
             public void onResponse(Drawable response) {
                 mCache.put(url, response);
+                mDataChangedListener.onDataChanged();
                 mRequestedUrls.remove(url);
                 Log.d("GifCastTag", "saving to cache: " + url);
 
@@ -87,6 +89,10 @@ public class DrawableRequestQueue {
         return mCache.get(url) != null;
     }
 
+    public void setDataChangedListener(OnDataChangedListener dataChangedListener) {
+        mDataChangedListener = dataChangedListener;
+    }
+
     private class OkHttpStack extends HurlStack {
         private final OkHttpClient client;
 
@@ -104,5 +110,9 @@ public class DrawableRequestQueue {
         @Override protected HttpURLConnection createConnection(URL url) throws IOException {
             return client.open(url);
         }
+    }
+
+    public interface OnDataChangedListener {
+        void onDataChanged();
     }
 }

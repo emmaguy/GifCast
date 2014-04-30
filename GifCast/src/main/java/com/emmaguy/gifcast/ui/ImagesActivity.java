@@ -11,6 +11,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.emmaguy.gifcast.R;
+import com.emmaguy.gifcast.data.DrawableRequestQueue;
 import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.data.Image;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -19,7 +20,7 @@ import java.util.List;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
-public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener, GifCastApplication.RedditImagesLoader.OnRedditItemsChanged {
+public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener, GifCastApplication.RedditImagesLoader.OnRedditItemsChanged, DrawableRequestQueue.OnDataChangedListener {
     private static final String GRIDVIEW_INSTANCE_STATE = "gridview_scroll_position";
 
     private GridView mGridView;
@@ -40,6 +41,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
         List<Image> images = getApp().getAllImages();
         getApp().setImagesRequesterListener(this);
+        getApp().setDataChangedListener(this);
 
         if (images.size() <= 0) {
             showAndStartAnimatingProgressBar();
@@ -151,6 +153,11 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     @Override
     public void onItemsChanged() {
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDataChanged() {
         mAdapter.notifyDataSetChanged();
     }
 }

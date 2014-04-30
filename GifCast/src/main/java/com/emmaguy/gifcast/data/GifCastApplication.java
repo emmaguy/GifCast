@@ -65,6 +65,10 @@ public class GifCastApplication extends Application {
         return mImagesLoader.getAllImages();
     }
 
+    public void setDataChangedListener(final DrawableRequestQueue.OnDataChangedListener listener) {
+        mRequestQueue.setDataChangedListener(listener);
+    }
+
     public void setImagesRequesterListener(final RedditImagesLoader.OnRedditItemsChanged listener) {
         mImagesLoader.setImagesRequesterListener(listener);
     }
