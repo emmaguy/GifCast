@@ -30,12 +30,13 @@ public class RedditNewImagesJson {
 
                 public final String name;
                 public final String thumbnail;
+                public final String subreddit;
 
                 public final long created_utc;
                 public final boolean is_self;
                 public final boolean over_18;
 
-                public RedditImage(String url, boolean is_self, boolean over_18, long created_utc, String title, String name, String thumbnail) {
+                public RedditImage(String url, boolean is_self, boolean over_18, long created_utc, String title, String name, String thumbnail, String subreddit) {
                     this.url = url;
                     this.is_self = is_self;
                     this.over_18 = over_18;
@@ -43,6 +44,7 @@ public class RedditNewImagesJson {
                     this.title = title;
                     this.name = name;
                     this.thumbnail = thumbnail;
+                    this.subreddit = subreddit;
                 }
             }
         }

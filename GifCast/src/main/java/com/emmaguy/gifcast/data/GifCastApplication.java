@@ -130,7 +130,7 @@ public class GifCastApplication extends Application {
             for (RedditNewImagesJson.RedditData.RedditImageData i : data) {
                 final String url = i.data.url;
 
-                final Image img = new Image(i.data.name, i.data.title, i.data.over_18);
+                final Image img = new Image(i.data.name, i.data.title, i.data.subreddit, i.data.over_18);
                 img.setThumbnailUrl(i.data.thumbnail);
 
                 if (Utils.isImage(url)) {

@@ -8,15 +8,17 @@ import java.util.List;
 public class Image {
     private final String mTitle;
     private final String mRedditId;
+    private final String mSubReddit;
     private final boolean mIsNSFW;
 
     private String mThumbnailUrl;
 
     public List<String> mUrls;
 
-    public Image(final String id, final String title, final boolean isNSFW) {
+    public Image(final String id, final String title, final String subReddit, final boolean isNSFW) {
         mUrls = new ArrayList<String>();
 
+        mSubReddit = subReddit;
         mRedditId = id;
         mTitle = title;
         mIsNSFW = isNSFW;
@@ -67,5 +69,9 @@ public class Image {
 
     public boolean hasUrl() {
         return mUrls.size() > 0;
+    }
+
+    public String getSubReddit() {
+        return mSubReddit;
     }
 }

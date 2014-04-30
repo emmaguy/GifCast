@@ -132,6 +132,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         Intent intent = new Intent(this, ImageDetailActivity.class);
         intent.putExtra("title", img.getTitle());
         intent.putExtra("url", img.getImageUrls());
+        intent.putExtra("subreddit", img.getSubReddit());
         startActivity(intent);
     }
 

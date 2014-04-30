@@ -23,10 +23,11 @@ public class ImageDetailActivity extends Activity {
         linearLayout = (LinearLayout)findViewById(R.id.linearlayout);
 
         Bundle extras = getIntent().getExtras();
+        String subReddit = extras.getString("subreddit");
         String title = extras.getString("title");
         String[] urls = extras.getStringArray("url");
 
-        getActionBar().setTitle(title);
+        getActionBar().setTitle("/r/" + subReddit + ": " + title);
 
         for(int i = 0; i < urls.length; i++) {
 
