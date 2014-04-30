@@ -1,5 +1,6 @@
 package com.emmaguy.gifcast.data;
 
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -43,9 +44,11 @@ public class DrawableRequest extends Request<Drawable> {
     private static final Object sDecodeLock = new Object();
 
     private final Response.Listener<Drawable> mListener;
+    private final Resources mResources;
 
-    public DrawableRequest(String url, Response.Listener<Drawable> listener, Response.ErrorListener errorListener) {
+    public DrawableRequest(String url, Response.Listener<Drawable> listener, Response.ErrorListener errorListener, Resources r) {
         super(Method.GET, url, errorListener);
+        mResources = r;
         setRetryPolicy(new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
         setShouldCache(true);
         mListener = listener;
@@ -84,19 +87,15 @@ public class DrawableRequest extends Request<Drawable> {
     private Drawable parseBitmap(byte[] data) {
         BitmapRegionLoader bitmapRegionLoader = BitmapRegionLoader.newInstance(new ByteArrayInputStream(data));
 
-        Rect rect = new Rect();
         int width = bitmapRegionLoader.getWidth();
         int height = bitmapRegionLoader.getHeight();
-        if (width > height) {
-            rect.set((width - height) / 2, 0, (width + height) / 2, height);
-        } else {
-            rect.set(0, (height - width) / 2, width, (height + width) / 2);
-        }
+
+        Rect rect = new Rect(0, 0, width, height);
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = calculateSampleSize(height, 256);
 
-        Drawable d = new BitmapDrawable(bitmapRegionLoader.decodeRegion(rect, options));
+        Drawable d = new BitmapDrawable(mResources, bitmapRegionLoader.decodeRegion(rect, options));
         bitmapRegionLoader.destroy();
         return d;
     }
@@ -106,6 +105,7 @@ public class DrawableRequest extends Request<Drawable> {
         while (rawHeight / (sampleSize * 2) > targetHeight) {
             sampleSize *= 2;
         }
+        Log.d("GifCastTag", "rawheight: " + rawHeight + " samplesize: " + sampleSize);
         return sampleSize;
     }
 

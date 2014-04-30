@@ -1,6 +1,7 @@
 package com.emmaguy.gifcast.data;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +20,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 public class DrawableRequestQueue {
+    private final Resources mResources;
     private RequestQueue mRequestQueue;
     private DrawableLruCache mCache;
     private HashMap<String, String> mRequestedUrls = new HashMap<String, String>();
@@ -26,6 +28,7 @@ public class DrawableRequestQueue {
     public DrawableRequestQueue(Context c) {
         mRequestQueue = Volley.newRequestQueue(c, new OkHttpStack());
         mCache = new DrawableLruCache();
+        mResources = c.getResources();
     }
 
     public void setDrawableOrAddRequest(final String url, final ImageView imageView) {
@@ -57,7 +60,7 @@ public class DrawableRequestQueue {
             public void onErrorResponse(VolleyError error) {
                 Log.e("GifCastTag", "Failed to get drawable: ", error);
             }
-        });
+        }, mResources);
 
         r.setTag(url);
         mRequestQueue.add(r);
