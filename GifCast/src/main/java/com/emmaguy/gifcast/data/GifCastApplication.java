@@ -143,11 +143,11 @@ public class GifCastApplication extends Application {
                 } else if (mImgurUrlParser.isImgurUrl(url)) {
                     final String imgurUrl = mImgurUrlParser.parseUrl(url);
                     if (mImgurUrlParser.isImgurGallery(url)) {
-                        requestImgurGalleryImages(imgurService, url, img, imgurUrl);
+                        requestImgurGalleryImages(imgurService, img, imgurUrl);
                     } else if (mImgurUrlParser.isImgurAlbum(url)) {
-                        requestImgurGalleryImages(imgurService, url, img, imgurUrl);
+                        requestImgurGalleryImages(imgurService, img, imgurUrl);
                     } else {
-                        requestImgurImage(imgurService, url, img, imgurUrl);
+                        requestImgurImage(imgurService, img, imgurUrl);
                     }
                     images.add(img);
                 } else {
@@ -157,7 +157,7 @@ public class GifCastApplication extends Application {
             return images;
         }
 
-        private void requestImgurImage(ImgurService imgurService, final String url, final Image img, String imgurUrl) {
+        private void requestImgurImage(ImgurService imgurService, final Image img, final String imgurUrl) {
             imgurService.getImgurImageUrl(imgurUrl, new Callback<ImgurJson>() {
                 @Override
                 public void success(ImgurJson imgurJson, Response response) {
@@ -169,12 +169,12 @@ public class GifCastApplication extends Application {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    Log.d("GifCastTag", "Error getting single imgur link: " + error.getMessage() + " url: " + url);
+                    Log.d("GifCastTag", "Error getting single imgur link, url: " + imgurUrl);
                 }
             });
         }
 
-        private void requestImgurGalleryImages(ImgurService imgurService, final String url, final Image img, String imgurUrl) {
+        private void requestImgurGalleryImages(ImgurService imgurService, final Image img, final String imgurUrl) {
             imgurService.getImgurImagesInGallery(imgurUrl, new Callback<ImgurGalleryJson>() {
                 @Override
                 public void success(ImgurGalleryJson imgurGalleryJson, Response response) {
@@ -186,7 +186,7 @@ public class GifCastApplication extends Application {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    Log.d("GifCastTag", "Error getting imgur gallery url: " + url + " msg: " + error.getMessage());
+                    Log.d("GifCastTag", "Error getting imgur gallery url: " + imgurUrl + " msg: " + error.getMessage());
                 }
             });
         }

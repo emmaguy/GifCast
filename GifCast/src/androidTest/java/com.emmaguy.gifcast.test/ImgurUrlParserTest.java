@@ -56,4 +56,11 @@ public class ImgurUrlParserTest extends InstrumentationTestCase {
 
         Assert.assertEquals("blah.gif", parser.parseUrl("imgur.com/blah.gif"));
     }
+
+    @SmallTest
+    public void test_anything_after_hash_is_stripped_off() {
+        ImgurUrlParser parser = new ImgurUrlParser();
+
+        Assert.assertEquals("SCnIGUn", parser.parseUrl("http://i.imgur.com/SCnIGUn.jpg?5"));
+    }
 }
