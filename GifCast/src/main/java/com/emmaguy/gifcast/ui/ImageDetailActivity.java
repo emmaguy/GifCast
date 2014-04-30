@@ -28,19 +28,18 @@ public class ImageDetailActivity extends Activity {
 
         getActionBar().setTitle(title);
 
-        for(int i = urls.length - 1; i >= 0; i--) {
+        for(int i = 0; i < urls.length; i++) {
 
+            final String url = urls[i];
             final FitScreenWidthImageView imageView = new FitScreenWidthImageView(this);
             imageView.setImageResource(R.drawable.animated_progress);
-            imageView.setTag(urls[i]);
+            imageView.setTag(url);
 
-            ((GifCastApplication)getApplication()).getRequestQueue().setDrawableOrAddRequest(urls[i], imageView);
+            ((GifCastApplication)getApplication()).getRequestQueue().setDrawableOrAddRequest(url, imageView);
 
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 
-            linearLayout.addView(imageView, 0, params);
+            linearLayout.addView(imageView, params);
         }
 
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
