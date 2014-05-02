@@ -24,21 +24,36 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     private static final String GRIDVIEW_INSTANCE_STATE = "gridview_scroll_position";
 
     private GridView mGridView;
-    private ImagesAdapter mAdapter;
     private SmoothProgressBar mProgressBar;
+    private ImagesAdapter mAdapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_images);
 
+        initialise(savedInstanceState);
+    }
+
+    private void initialise(final Bundle savedInstanceState) {
         mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
-        mAdapter = new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW());
 
-        mGridView.setAdapter(mAdapter);
+        if(canHaveCachedImages()) {
+            mAdapter = new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW());
+            mGridView.setAdapter(mAdapter);
+
+            setImagesFromMemoryOrRetrieve(savedInstanceState);
+        }
+
         mGridView.setOnItemClickListener(this);
 
+        enableEndlessScrolling();
+        tintStatusBar();
+    }
+
+    private void setImagesFromMemoryOrRetrieve(final Bundle savedInstanceState) {
         List<Image> images = getApp().getAllImages();
         getApp().setImagesRequesterListener(this);
         getApp().setDataChangedListener(this);
@@ -60,7 +75,9 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             });
             mAdapter.notifyDataSetChanged();
         }
+    }
 
+    private void enableEndlessScrolling() {
         mGridView.setOnScrollListener(new EndlessScrollListener(1) {
 
             @Override
@@ -75,7 +92,9 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                 }
             }
         });
+    }
 
+    private void tintStatusBar() {
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintColor(getResources().getColor(R.color.hot_pink));
@@ -84,6 +103,10 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     private void showAndStartAnimatingProgressBar() {
         mProgressBar.progressiveStart();
         mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private boolean canHaveCachedImages() {
+        return getApplication() instanceof GifCastApplication;
     }
 
     private GifCastApplication getApp() {

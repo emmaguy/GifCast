@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImagesAdapter extends BaseAdapter implements Filterable {
-
-    private final LayoutInflater mViewInflater;
     private final DrawableRequestQueue mRequestQueue;
+    private final LayoutInflater mViewInflater;
     private final RedditImagesFilter mFilter;
+
     private OnFilteringComplete mFilteringListener;
 
     private final List<Image> mOriginalImages = new ArrayList<Image>();
