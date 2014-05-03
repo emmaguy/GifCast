@@ -21,6 +21,7 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
     private Solo mSolo;
 
     private String mItemAtTopOfGridViewBeforeConfigChange;
+    private int mOriginalOrientation;
 
     public ImagesActivityRetainsScrollPositionWhenOrientationChangesTest() {
         super(ImagesActivity.class);
@@ -40,6 +41,8 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
 
         GifCastApplication app = (GifCastApplication) getInstrumentation().getTargetContext().getApplicationContext();
         app.setImages(createImages());
+
+        mOriginalOrientation = getActivity().getResources().getConfiguration().orientation;
 
         givenActivityScrolledDown();
         whenConfigurationChanges();
@@ -73,10 +76,8 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
     }
 
     private void whenConfigurationChanges() {
-        assertEquals("Orientation should start as landscape", getActivity().getResources().getConfiguration().orientation, Configuration.ORIENTATION_PORTRAIT);
-
         mInstrumentation.waitForIdleSync();
-        mSolo.setActivityOrientation(Solo.LANDSCAPE);
+        mSolo.setActivityOrientation(mOriginalOrientation == Configuration.ORIENTATION_PORTRAIT ? Configuration.ORIENTATION_LANDSCAPE : Configuration.ORIENTATION_LANDSCAPE);
         mInstrumentation.waitForIdleSync();
     }
 
@@ -86,6 +87,16 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
 
         assertNotSame("First item, should have scrolled", "0", text);
 
-        assertEquals("Item does not match: scroll position has not been correctly saved", mItemAtTopOfGridViewBeforeConfigChange, text);
+        int indexBeforeChange = Integer.parseInt(mItemAtTopOfGridViewBeforeConfigChange);
+        int indexAfterChange = Integer.parseInt(text);
+
+        // should be in range, +3 or -3 as item may not still be very first one (i.e. top left), particularly on tablets
+        if(indexBeforeChange < indexAfterChange) {
+            assertTrue(indexBeforeChange + 1 == indexAfterChange || indexBeforeChange + 2 == indexAfterChange || indexBeforeChange + 3 == indexAfterChange);
+        } else if (indexBeforeChange > indexAfterChange) {
+            assertTrue(indexBeforeChange - 1 == indexAfterChange || indexBeforeChange - 2 == indexAfterChange || indexBeforeChange - 3 == indexAfterChange);
+        } else {
+            assertEquals("Item does not match: scroll position has not been correctly saved", mItemAtTopOfGridViewBeforeConfigChange, text);
+        }
     }
 }
