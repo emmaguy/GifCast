@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -25,7 +26,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     private GridView mGridView;
     private SmoothProgressBar mProgressBar;
-    private ImagesAdapter mAdapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -40,9 +40,8 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
 
-        if(canHaveCachedImages()) {
-            mAdapter = new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW());
-            mGridView.setAdapter(mAdapter);
+        if (canHaveCachedImages()) {
+            mGridView.setAdapter(new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW()));
 
             setImagesFromMemoryOrRetrieve(savedInstanceState);
         }
@@ -62,18 +61,19 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             showAndStartAnimatingProgressBar();
             getApp().requestItems("", "");
         } else {
-            mAdapter.addImages(images);
-            mAdapter.setFilteringCompleteListener(new ImagesAdapter.OnFilteringComplete() {
+            final ImagesAdapter adapter = (ImagesAdapter) mGridView.getAdapter();
+            adapter.addImages(images);
+            adapter.setFilteringCompleteListener(new ImagesAdapter.OnFilteringComplete() {
                 @Override
                 public void onFilteringComplete() {
                     if (savedInstanceState != null) {
                         int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
                         mGridView.setSelection(position);
                     }
-                    mAdapter.setFilteringCompleteListener(null);
+                    adapter.setFilteringCompleteListener(null);
                 }
             });
-            mAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -84,10 +84,11 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             public void onLoadMore(int page, int totalItemsCount) {
                 Toast.makeText(ImagesActivity.this, "moar!", Toast.LENGTH_SHORT).show();
 
-                if (mAdapter.getCount() > 0) {
+                int count = mGridView.getAdapter().getCount();
+                if (count > 0) {
                     showAndStartAnimatingProgressBar();
 
-                    String afterId = ((Image) mAdapter.getItem(mAdapter.getCount() - 1)).getRedditId();
+                    String afterId = ((Image) mGridView.getAdapter().getItem(count - 1)).getRedditId();
                     getApp().requestItems("", afterId);
                 }
             }
@@ -143,7 +144,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             boolean shouldHideNSFW = !shouldHideNSFW();
             updateHideNSFW(shouldHideNSFW);
 
-            mAdapter.toggleNSFWFilter(shouldHideNSFW);
+            ((ImagesAdapter) mGridView.getAdapter()).toggleNSFWFilter(shouldHideNSFW);
             item.setChecked(shouldHideNSFW);
             return true;
         }
@@ -152,7 +153,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Image img = (Image) mAdapter.getItem(i);
+        Image img = (Image) mGridView.getAdapter().getItem(i);
 
         Intent intent = new Intent(this, ImageDetailActivity.class);
         intent.putExtra("title", img.getTitle());
@@ -163,8 +164,9 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     @Override
     public void onNewItemsAdded(List<Image> images) {
-        mAdapter.addImages(images);
-        mAdapter.notifyDataSetChanged();
+        final ImagesAdapter adapter = (ImagesAdapter) mGridView.getAdapter();
+        adapter.addImages(images);
+        adapter.notifyDataSetChanged();
 
         hideAndStopAnimatingProgressBar();
     }
@@ -176,11 +178,11 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     @Override
     public void onItemsChanged() {
-        mAdapter.notifyDataSetChanged();
+        ((BaseAdapter) mGridView.getAdapter()).notifyDataSetChanged();
     }
 
     @Override
     public void onDataChanged() {
-        mAdapter.notifyDataSetChanged();
+        ((BaseAdapter) mGridView.getAdapter()).notifyDataSetChanged();
     }
 }

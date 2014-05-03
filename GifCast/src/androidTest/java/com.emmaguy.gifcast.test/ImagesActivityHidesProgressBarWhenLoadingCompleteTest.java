@@ -11,6 +11,7 @@ import com.emmaguy.gifcast.R;
 import com.emmaguy.gifcast.ui.ImagesActivity;
 import com.robotium.solo.Solo;
 // test config change maintains position
+/*
 public class ImagesActivityHidesProgressBarWhenLoadingCompleteTest extends ActivityInstrumentationTestCase2<ImagesActivity> {
     private Instrumentation mInstrumentation;
     private Solo mSolo;
@@ -59,4 +60,4 @@ public class ImagesActivityHidesProgressBarWhenLoadingCompleteTest extends Activ
     protected void tearDown() throws Exception {
         super.tearDown();
     }
-}
+}*/
