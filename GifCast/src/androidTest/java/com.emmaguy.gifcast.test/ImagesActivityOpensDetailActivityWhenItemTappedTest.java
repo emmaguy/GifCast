@@ -2,6 +2,7 @@ package com.emmaguy.gifcast.test;
 
 import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.widget.GridView;
@@ -30,6 +31,10 @@ public class ImagesActivityOpensDetailActivityWhenItemTappedTest extends Activit
 
         mInstrumentation = getInstrumentation();
         mSolo = new Solo(mInstrumentation);
+
+        Intent i = new Intent(getInstrumentation().getTargetContext(), ImagesActivity.class);
+        i.putExtra("LOAD_IMAGES", false);
+        setActivityIntent(i);
 
         given();
         when();
@@ -66,7 +71,6 @@ public class ImagesActivityOpensDetailActivityWhenItemTappedTest extends Activit
     private void when() {
         mInstrumentation.waitForIdleSync();
         mSolo.clickInList(1); // indexed from 1
-
         mInstrumentation.waitForIdleSync();
     }
 

@@ -40,15 +40,15 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
 
-        if (canHaveCachedImages()) {
+        if (canLoadImages()) {
             mGridView.setAdapter(new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW()));
 
             setImagesFromMemoryOrRetrieve(savedInstanceState);
+            enableEndlessScrolling();
         }
 
         mGridView.setOnItemClickListener(this);
 
-        enableEndlessScrolling();
         tintStatusBar();
     }
 
@@ -87,7 +87,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                 int count = mGridView.getAdapter().getCount();
                 if (count > 0) {
                     showAndStartAnimatingProgressBar();
-
                     String afterId = ((Image) mGridView.getAdapter().getItem(count - 1)).getRedditId();
                     getApp().requestItems("", afterId);
                 }
@@ -106,8 +105,12 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
-    private boolean canHaveCachedImages() {
-        return getApplication() instanceof GifCastApplication;
+    private boolean canLoadImages() {
+        if(getIntent().getExtras() != null) {
+            return getIntent().getExtras().getBoolean("LOAD_IMAGES");
+        }
+
+        return true;
     }
 
     private GifCastApplication getApp() {
