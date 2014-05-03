@@ -40,10 +40,10 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
 
-        if (canLoadImages()) {
-            mGridView.setAdapter(new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW()));
+         mGridView.setAdapter(new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW()));
+         setImagesFromMemoryOrRetrieve(savedInstanceState);
 
-            setImagesFromMemoryOrRetrieve(savedInstanceState);
+        if (canEnableEndlessScrolling()) {
             enableEndlessScrolling();
         }
 
@@ -57,7 +57,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         getApp().setImagesRequesterListener(this);
         getApp().setDataChangedListener(this);
 
-        if (images.size() <= 0) {
+        if (images.size() <= 0 && canLoadImages()) {
             showAndStartAnimatingProgressBar();
             getApp().requestItems("", "");
         } else {
@@ -103,6 +103,14 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     private void showAndStartAnimatingProgressBar() {
         mProgressBar.progressiveStart();
         mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private boolean canEnableEndlessScrolling() {
+        if(getIntent().getExtras() != null) {
+            return getIntent().getExtras().getBoolean("ENABLE_ENDLESS");
+        }
+
+        return true;
     }
 
     private boolean canLoadImages() {

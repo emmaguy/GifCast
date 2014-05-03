@@ -65,6 +65,10 @@ public class GifCastApplication extends Application {
         return mImagesLoader.getAllImages();
     }
 
+    public void setImages(List<Image> images) {
+        mImagesLoader.setImages(images);
+    }
+
     public void setDataChangedListener(final DrawableRequestQueue.OnDataChangedListener listener) {
         mRequestQueue.setDataChangedListener(listener);
     }
@@ -101,6 +105,10 @@ public class GifCastApplication extends Application {
 
         public void setImagesRequesterListener(OnRedditItemsChanged listener) {
             mListener = listener;
+        }
+
+        public void setImages(List<Image> images) {
+            mImages.addAll(images);
         }
 
         public void load(final GifCastApplication app, final String before, final String after) {

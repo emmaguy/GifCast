@@ -32,8 +32,10 @@ public class ImagesActivityOpensDetailActivityWhenItemTappedTest extends Activit
         mInstrumentation = getInstrumentation();
         mSolo = new Solo(mInstrumentation);
 
+        // intent to not pull images from Reddit/enable endless scrolling
         Intent i = new Intent(getInstrumentation().getTargetContext(), ImagesActivity.class);
         i.putExtra("LOAD_IMAGES", false);
+        i.putExtra("ENABLE_ENDLESS", false);
         setActivityIntent(i);
 
         given();
