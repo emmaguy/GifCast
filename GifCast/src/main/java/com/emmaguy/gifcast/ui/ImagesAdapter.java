@@ -21,6 +21,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
     private final DrawableRequestQueue mRequestQueue;
     private final LayoutInflater mViewInflater;
     private final RedditImagesFilter mFilter;
+    private boolean mHideNSFW;
 
     private OnFilteringComplete mFilteringListener;
 
@@ -28,7 +29,8 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
     private List<Image> mFilteredImages = new ArrayList<Image>();
 
     public ImagesAdapter(Context context, DrawableRequestQueue requestQueue, boolean hideNSFW) {
-        mFilter = new RedditImagesFilter(hideNSFW);
+        mHideNSFW = hideNSFW;
+        mFilter = new RedditImagesFilter();
         mRequestQueue = requestQueue;
         mViewInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -39,9 +41,12 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
 
     public void addImages(List<Image> images) {
         mOriginalImages.addAll(images);
-        mFilteredImages = images;
 
-        mFilter.filter("");
+        if(mHideNSFW) {
+            mFilter.filter("");
+        } else {
+            mFilteredImages = images;
+        }
     }
 
     @Override
@@ -132,12 +137,6 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
 
     private class RedditImagesFilter extends Filter {
 
-        private boolean mHideNSFW;
-
-        public RedditImagesFilter(boolean hideNSFW) {
-            mHideNSFW = hideNSFW;
-        }
-
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             FilterResults filterResults = new FilterResults();
@@ -167,7 +166,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         }
 
         public void setFilterNSFW(boolean filterNSFW) {
-            this.mHideNSFW = filterNSFW;
+            mHideNSFW = filterNSFW;
         }
     }
 
