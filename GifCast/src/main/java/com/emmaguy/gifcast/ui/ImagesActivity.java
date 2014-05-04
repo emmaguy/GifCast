@@ -15,7 +15,7 @@ import com.emmaguy.gifcast.R;
 import com.emmaguy.gifcast.data.DrawableRequestQueue;
 import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.data.Image;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.emmaguy.gifcast.util.Utils;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
         mGridView.setOnItemClickListener(this);
 
-        tintStatusBar();
+        Utils.tintActionBar(this);
     }
 
     private void setImagesFromMemoryOrRetrieve(final Bundle savedInstanceState) {
@@ -66,14 +66,18 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
             adapter.setFilteringCompleteListener(new ImagesAdapter.OnFilteringComplete() {
                 @Override
                 public void onFilteringComplete() {
-                    if (savedInstanceState != null) {
-                        int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
-                        mGridView.setSelection(position);
-                    }
+                    setScrollPositionFromInstanceState(savedInstanceState);
                     adapter.setFilteringCompleteListener(null);
                 }
             });
             adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void setScrollPositionFromInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
+            mGridView.setSelection(position);
         }
     }
 
@@ -92,12 +96,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                 }
             }
         });
-    }
-
-    private void tintStatusBar() {
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintColor(getResources().getColor(R.color.hot_pink));
     }
 
     private void showAndStartAnimatingProgressBar() {
