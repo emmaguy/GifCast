@@ -57,7 +57,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         getApp().setImagesRequesterListener(this);
         getApp().setDataChangedListener(this);
 
-        if (images.size() <= 0 && canLoadImages()) {
+        if (images.size() <= 0) {
             showAndStartAnimatingProgressBar();
             getApp().requestItems("", "");
         } else {
@@ -108,14 +108,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     private boolean canEnableEndlessScrolling() {
         if(getIntent().getExtras() != null) {
             return getIntent().getExtras().getBoolean("ENABLE_ENDLESS");
-        }
-
-        return true;
-    }
-
-    private boolean canLoadImages() {
-        if(getIntent().getExtras() != null) {
-            return getIntent().getExtras().getBoolean("LOAD_IMAGES");
         }
 
         return true;

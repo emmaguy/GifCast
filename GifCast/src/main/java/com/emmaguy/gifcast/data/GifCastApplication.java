@@ -96,7 +96,7 @@ public class GifCastApplication extends Application {
     public static class RedditImagesLoader {
 
         private final ImgurUrlParser mImgurUrlParser = new ImgurUrlParser();
-        private final List<Image> mImages = new ArrayList<Image>();
+        private List<Image> mImages = new ArrayList<Image>();
         private OnRedditItemsChanged mListener;
 
         public List<Image> getAllImages() {
@@ -108,7 +108,7 @@ public class GifCastApplication extends Application {
         }
 
         public void setImages(List<Image> images) {
-            mImages.addAll(images);
+            mImages = images;
         }
 
         public void load(final GifCastApplication app, final String before, final String after) {

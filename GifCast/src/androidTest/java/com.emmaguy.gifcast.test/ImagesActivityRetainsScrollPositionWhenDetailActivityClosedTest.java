@@ -2,28 +2,28 @@ package com.emmaguy.gifcast.test;
 
 import android.app.Instrumentation;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.widget.GridView;
+import android.widget.ImageView;
 
 import com.emmaguy.gifcast.R;
 import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.data.Image;
+import com.emmaguy.gifcast.ui.ImageDetailActivity;
 import com.emmaguy.gifcast.ui.ImagesActivity;
 import com.robotium.solo.Solo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest extends ActivityInstrumentationTestCase2<ImagesActivity> {
+public class ImagesActivityRetainsScrollPositionWhenDetailActivityClosedTest extends ActivityInstrumentationTestCase2<ImagesActivity> {
     private Instrumentation mInstrumentation;
     private Solo mSolo;
 
-    private String mItemAtTopOfGridViewBeforeConfigChange;
-    private int mOriginalOrientation;
+    private String mItemAtTopOfGridView;
 
-    public ImagesActivityRetainsScrollPositionWhenOrientationChangesTest() {
+    public ImagesActivityRetainsScrollPositionWhenDetailActivityClosedTest() {
         super(ImagesActivity.class);
     }
 
@@ -42,10 +42,8 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
         GifCastApplication app = (GifCastApplication) getInstrumentation().getTargetContext().getApplicationContext();
         app.setImages(createImages());
 
-        mOriginalOrientation = getActivity().getResources().getConfiguration().orientation;
-
         givenActivityScrolledDown();
-        whenConfigurationChanges();
+        whenDetailActivityOpened();
     }
 
     private void givenActivityScrolledDown() {
@@ -57,10 +55,6 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
         mInstrumentation.waitForIdleSync();
         mSolo.scrollDownList((android.widget.AbsListView) getActivity().findViewById(R.id.gridview));
         mInstrumentation.waitForIdleSync();
-
-        mItemAtTopOfGridViewBeforeConfigChange = mSolo.getImage(1).getTag().toString();
-
-        assertNotSame("Old first item, should have scrolled", "0", mItemAtTopOfGridViewBeforeConfigChange);
     }
 
     private List<Image> createImages() {
@@ -75,28 +69,32 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
         return images;
     }
 
-    private void whenConfigurationChanges() {
+    private void whenDetailActivityOpened() {
+        ImageView imageViewAtTop = mSolo.getImage(1);
+
+        mItemAtTopOfGridView = imageViewAtTop.getTag().toString();
+        assertNotSame("Old first item; should have scrolled", "0", mItemAtTopOfGridView);
+
         mInstrumentation.waitForIdleSync();
-        mSolo.setActivityOrientation(mOriginalOrientation == Configuration.ORIENTATION_PORTRAIT ? Configuration.ORIENTATION_LANDSCAPE : Configuration.ORIENTATION_LANDSCAPE);
+        mSolo.clickOnView(imageViewAtTop);
         mInstrumentation.waitForIdleSync();
     }
 
     @MediumTest
-    public void test_stillInCorrectPosition() {
-        String text = mSolo.getImage(1).getTag().toString();
+    public void test_tapping_an_item_opens_ImageDetailActivity_and_has_correct_title() {
+        assertTrue("Failed to wait for ImageDetailActivity", mSolo.waitForActivity(ImageDetailActivity.class));
 
-        assertNotSame("First item, should have scrolled", "0", text);
+        mInstrumentation.waitForIdleSync();
+        String title = mSolo.getCurrentActivity().getActionBar().getTitle().toString();
+        assertTrue("Incorrect title on ImageDetailActivity " + title, title.startsWith("/r/gifs: Awesome Item"));
+    }
 
-        int indexBeforeChange = Integer.parseInt(mItemAtTopOfGridViewBeforeConfigChange);
-        int indexAfterChange = Integer.parseInt(text);
+    @MediumTest
+    public void test_pressing_back_maintains_scroll_position() {
+        mSolo.clickOnActionBarHomeButton();
 
-        // should be in range, +3 or -3 as item may not still be very first one (i.e. top left), particularly on tablets
-        if(indexBeforeChange < indexAfterChange) {
-            assertTrue(indexBeforeChange + 1 == indexAfterChange || indexBeforeChange + 2 == indexAfterChange || indexBeforeChange + 3 == indexAfterChange);
-        } else if (indexBeforeChange > indexAfterChange) {
-            assertTrue(indexBeforeChange - 1 == indexAfterChange || indexBeforeChange - 2 == indexAfterChange || indexBeforeChange - 3 == indexAfterChange);
-        } else {
-            assertEquals("Item does not match: scroll position has not been correctly saved", mItemAtTopOfGridViewBeforeConfigChange, text);
-        }
+        mSolo.waitForActivity(ImagesActivity.class);
+
+        assertEquals("Lost scroll position on back", mItemAtTopOfGridView, mSolo.getImage(1).getTag());
     }
 }
