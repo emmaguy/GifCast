@@ -1,23 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Widget.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
+        <item name="android:windowBackground">@color/dark_grey</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <item name="android:windowTranslucentNavigation" tools:ignore="NewApi">true</item>
+        <item name="spbStyle">@style/AppTheme.SmoothProgressBar</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@drawable/ab_solid</item>
     </style>
 
-    <style name="Theme.TranslucentActionBar" parent="@android:style/Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/Widget.ActionBar</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
-        <item name="spbStyle">@style/Theme.SmoothProgressBar</item>
-    </style>
-
-    <style name="Theme.TranslucentActionBar.ActionBar" />
-
-    <style name="Theme.TranslucentActionBar.ActionBar.Overlay">
-        <item name="android:actionBarStyle">@style/Widget.ActionBar.Transparent</item>
-        <item name="android:windowActionBarOverlay">true</item>
-    </style>
-
-    <style name="Theme.SmoothProgressBar" parent="SmoothProgressBar">
+    <style name="AppTheme.SmoothProgressBar" parent="SmoothProgressBar">
         <item name="spb_stroke_separator_length">0dp</item>
         <item name="spb_sections_count">3</item>
         <item name="spb_speed">1.5</item>
@@ -33,9 +28,5 @@
         <item>@android:color/white</item>
         <item>@color/dark_grey</item>
     </integer-array>
-
-    <style name="Widget.ActionBar.Transparent">
-        <item name="android:background">@android:color/transparent</item>
-    </style>
 
 </resources>

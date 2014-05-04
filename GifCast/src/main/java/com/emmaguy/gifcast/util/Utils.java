@@ -12,7 +12,7 @@ public class Utils {
 
     public static boolean isImage(String pictureFileName) {
         return pictureFileName.endsWith(".png")
-                || pictureFileName.endsWith(".gif")
+                || isGif(pictureFileName)
                 || pictureFileName.endsWith(".jpg")
                 || pictureFileName.endsWith(".jpeg");
     }

@@ -1,12 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    android:background="@color/dark_grey"
-    tools:context="${packageName}.${activityClass}">
+    android:layout_height="match_parent">
 
     <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
         android:id="@+id/progressbar"
@@ -17,8 +12,10 @@
 
     <GridView
         android:id="@+id/gridview"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:numColumns="@integer/grid_rows" />
 
-</LinearLayout>
+</FrameLayout>
