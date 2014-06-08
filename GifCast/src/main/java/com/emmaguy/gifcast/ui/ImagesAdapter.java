@@ -135,6 +135,12 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
         return mFilter;
     }
 
+    public void clearAdapter() {
+        mOriginalImages.clear();
+        mFilteredImages.clear();
+        notifyDataSetChanged();
+    }
+
     private class RedditImagesFilter extends Filter {
 
         @Override

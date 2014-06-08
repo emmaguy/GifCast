@@ -7,5 +7,12 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="loading">Loading...</string>
+    <string name="subreddits">Subreddits</string>
+    <string name="add_subreddit">Add Subreddit</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_subreddits">Select Subreddits</string>
+    <string name="no_subreddits">No Subreddits selected!</string>
+    <string name="enter_subreddit_name">Enter subreddit of your choice</string>
 
 </resources>

@@ -32,8 +32,6 @@ public class GifCastApplication extends Application {
     private DrawableRequestQueue mRequestQueue;
     private final RedditImagesLoader mImagesLoader = new RedditImagesLoader();
 
-    private static String[] mSubReddits = new String[]{"pics","gifs", "spaceporn","earthporn","itookapicture","exposureporn", "highres"};
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -112,10 +110,17 @@ public class GifCastApplication extends Application {
         }
 
         public void load(final GifCastApplication app, final String before, final String after) {
+            List<String> selectedSubReddits = Utils.selectedSubReddits(app.getApplicationContext());
+
+            if(selectedSubReddits.size() <= 0) {
+                Toast.makeText(app.getApplicationContext(), R.string.no_subreddits, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             final ImgurService imgurService = app.getImgurService();
 
             LatestImagesRedditService imagesService = app.getLatestImagesRedditService();
-            imagesService.getNewImagesInSubreddit(TextUtils.join("+", mSubReddits), 20, before, after, new Callback<RedditNewImagesJson>() {
+            imagesService.getNewImagesInSubreddit(TextUtils.join("+", selectedSubReddits), 20, before, after, new Callback<RedditNewImagesJson>() {
                 @Override
                 public void success(RedditNewImagesJson data, Response response) {
                     if (data == null || data.data == null || data.data.children == null)
