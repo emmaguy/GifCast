@@ -111,7 +111,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     private void showAndStartAnimatingProgressBar() {
         mProgressBar.progressiveStart();
-        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     private boolean canEnableEndlessScrolling() {
@@ -262,8 +261,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
     }
 
     private void hideAndStopAnimatingProgressBar() {
-     //   mProgressBar.progressiveStop();
-       // mProgressBar.setVisibility(View.GONE);
+        mProgressBar.progressiveStop();
     }
 
     @Override

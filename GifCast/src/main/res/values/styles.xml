@@ -4,7 +4,7 @@
         <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
         <item name="android:windowBackground">@color/dark_grey</item>
         <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
-        <item name="android:windowTranslucentNavigation" tools:ignore="NewApi">true</item>
+        <item name="android:windowTranslucentNavigation" tools:ignore="NewApi">@bool/translucentNavBar</item>
         <item name="spbStyle">@style/AppTheme.SmoothProgressBar</item>
     </style>
 
@@ -24,7 +24,6 @@
     </style>
 
     <integer-array name="progressbar_colors">
-        <item>@color/hot_pink</item>
         <item>@android:color/white</item>
         <item>@color/dark_grey</item>
     </integer-array>
