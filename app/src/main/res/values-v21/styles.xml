@@ -1,0 +1,11 @@
+<resources>
+
+    <style name="AppTheme" parent="@android:style/Theme.Material">
+        <item name="android:colorPrimary">@color/hot_pink</item>
+        <item name="android:colorPrimaryDark">@color/hot_pink</item>
+        <item name="android:colorAccent">@color/hot_pink</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="spbStyle">@style/AppTheme.SmoothProgressBar</item>
+    </style>
+
+</resources>

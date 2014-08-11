@@ -1,22 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="@dimen/paddingTop"
-    android:paddingRight="@dimen/paddingRight">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true">
 
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/paddingBottom"
         android:clipToPadding="false"
         android:numColumns="@integer/grid_rows"
-        android:scrollbarStyle="outsideOverlay" />
+        android:paddingBottom="@dimen/paddingBottom"
+        android:scrollbarStyle="outsideOverlay"/>
 
     <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
         android:id="@+id/progressbar"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:indeterminate="true" />
+        android:indeterminate="true"/>
 
 </RelativeLayout>
