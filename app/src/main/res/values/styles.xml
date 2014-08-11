@@ -25,7 +25,7 @@
 
     <integer-array name="progressbar_colors">
         <item>@android:color/white</item>
-        <item>@color/dark_grey</item>
+        <item>@android:color/transparent</item>
     </integer-array>
 
 </resources>
