@@ -1,6 +1,7 @@
 package com.emmaguy.gifcast.ui;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,9 +9,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.emmaguy.gifcast.R;
@@ -248,7 +251,11 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         intent.putExtra("title", img.getTitle());
         intent.putExtra("url", img.getImageUrls());
         intent.putExtra("subreddit", img.getSubReddit());
-        startActivity(intent);
+
+        ImageView hero = (ImageView) view.findViewById(R.id.imageview);
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, hero, "photo_hero");
+
+        startActivity(intent, options.toBundle());
     }
 
     @Override

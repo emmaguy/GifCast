@@ -4,8 +4,15 @@
         <item name="android:colorPrimary">@color/hot_pink</item>
         <item name="android:colorPrimaryDark">@color/hot_pink</item>
         <item name="android:colorAccent">@color/hot_pink</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/hot_pink</item>
         <item name="spbStyle">@style/AppTheme.SmoothProgressBar</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:clipToPadding">false</item>
+
+        <item name="android:windowContentTransitions">true</item>
+
+        <item name="android:windowSharedElementEnterTransition">@transition/move_image</item>
+        <item name="android:windowSharedElementExitTransition">@transition/move_image</item>
     </style>
 
 </resources>

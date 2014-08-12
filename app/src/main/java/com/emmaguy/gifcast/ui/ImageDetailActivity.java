@@ -34,11 +34,11 @@ public class ImageDetailActivity extends Activity {
         getActionBar().setTitle("/r/" + subReddit + ": " + title);
 
         for (int i = 0; i < urls.length; i++) {
-
             final String url = urls[i];
             final FitScreenWidthImageView imageView = new FitScreenWidthImageView(this);
             imageView.setImageResource(R.drawable.animated_progress);
             imageView.setTag(url);
+            imageView.setViewName("photo_hero");
 
             ((GifCastApplication) getApplication()).getRequestQueue().setDrawableOrAddRequest(url, imageView);
 
