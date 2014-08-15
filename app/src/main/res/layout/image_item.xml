@@ -9,8 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/animated_progress"
-        android:viewName="photo_hero"/>
+        android:src="@drawable/animated_progress"/>
 
     <!--<TextView
         android:layout_width="match_parent"

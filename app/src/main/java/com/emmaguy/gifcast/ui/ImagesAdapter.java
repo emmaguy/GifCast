@@ -92,6 +92,8 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
             viewHolder.imageView.setImageResource(R.drawable.animated_progress);
         }
 
+        viewHolder.imageView.setViewName("grid:image:" + image.getRedditId()); // use reddit id to be unique
+
         if (image.hasThumbnail()) {
             boolean hasImage = true;
             if(image.hasUrl()) {

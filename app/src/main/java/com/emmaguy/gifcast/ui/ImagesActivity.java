@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -253,7 +254,12 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         intent.putExtra("subreddit", img.getSubReddit());
 
         ImageView hero = (ImageView) view.findViewById(R.id.imageview);
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, hero, "photo_hero");
+
+        int[] locations = new int[2];
+        hero.getLocationOnScreen(locations);
+
+        Log.d("lol", "hero location: " + locations[0] + " y: " + locations[1]);
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, hero, ImageDetailActivity.VIEW_NAME_HEADER_IMAGE);
 
         startActivity(intent, options.toBundle());
     }

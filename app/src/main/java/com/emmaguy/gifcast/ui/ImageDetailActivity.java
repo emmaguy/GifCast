@@ -15,7 +15,7 @@ import com.emmaguy.gifcast.util.Utils;
 
 public class ImageDetailActivity extends Activity {
     private LinearLayout linearLayout;
-
+    public static final String VIEW_NAME_HEADER_IMAGE = "detail:header:image";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +38,7 @@ public class ImageDetailActivity extends Activity {
             final FitScreenWidthImageView imageView = new FitScreenWidthImageView(this);
             imageView.setImageResource(R.drawable.animated_progress);
             imageView.setTag(url);
-            imageView.setViewName("photo_hero");
+            imageView.setViewName(VIEW_NAME_HEADER_IMAGE);
 
             ((GifCastApplication) getApplication()).getRequestQueue().setDrawableOrAddRequest(url, imageView);
 
