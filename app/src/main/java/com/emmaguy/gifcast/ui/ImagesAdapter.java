@@ -138,6 +138,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
     public void clearAdapter() {
         mOriginalImages.clear();
         mFilteredImages.clear();
+
         notifyDataSetChanged();
     }
 

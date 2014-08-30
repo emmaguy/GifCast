@@ -8,8 +8,8 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.ui.views.FitScreenWidthImageView;
 import com.emmaguy.gifcast.util.Utils;
 
@@ -17,7 +17,7 @@ public class ImageDetailActivity extends Activity {
     private LinearLayout linearLayout;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_image_detail);
@@ -40,7 +40,7 @@ public class ImageDetailActivity extends Activity {
             imageView.setImageResource(R.drawable.animated_progress);
             imageView.setTag(url);
 
-            ((GifCastApplication) getApplication()).getRequestQueue().setDrawableOrAddRequest(url, imageView);
+            ((GifCastApplication) getApplication()).requestQueue().setDrawableOrAddRequest(url, imageView);
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 

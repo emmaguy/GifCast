@@ -1,14 +1,12 @@
 package com.emmaguy.gifcast.test;
 
 import android.app.Instrumentation;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.widget.GridView;
 
 import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.data.Image;
 import com.emmaguy.gifcast.ui.ImagesActivity;
 import com.robotium.solo.Solo;
@@ -34,9 +32,6 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
         mInstrumentation = getInstrumentation();
         mSolo = new Solo(mInstrumentation);
 
-        GifCastApplication app = (GifCastApplication) getInstrumentation().getTargetContext().getApplicationContext();
-        app.setImages(createImages());
-
         mOriginalOrientation = getActivity().getResources().getConfiguration().orientation;
 
         givenActivityScrolledDown();
@@ -61,7 +56,7 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
     private List<Image> createImages() {
         List<Image> images = new ArrayList<Image>();
 
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             Image image = new Image("" + i, "Awesome Item: " + i, "gifs", false);
             image.updateUrl("" + i);
             images.add(image);
@@ -85,13 +80,7 @@ public class ImagesActivityRetainsScrollPositionWhenOrientationChangesTest exten
         int indexBeforeChange = Integer.parseInt(mItemAtTopOfGridViewBeforeConfigChange);
         int indexAfterChange = Integer.parseInt(text);
 
-        // should be in range, +3 or -3 as item may not still be very first one (i.e. top left), particularly on tablets
-        if(indexBeforeChange < indexAfterChange) {
-            assertTrue(indexBeforeChange + 1 == indexAfterChange || indexBeforeChange + 2 == indexAfterChange || indexBeforeChange + 3 == indexAfterChange);
-        } else if (indexBeforeChange > indexAfterChange) {
-            assertTrue(indexBeforeChange - 1 == indexAfterChange || indexBeforeChange - 2 == indexAfterChange || indexBeforeChange - 3 == indexAfterChange);
-        } else {
-            assertEquals("Item does not match: scroll position has not been correctly saved", mItemAtTopOfGridViewBeforeConfigChange, text);
-        }
+        // TODO: this will break on tablets, perhaps check item is visible rather than index is identical?
+        assertEquals("Item does not match: scroll position has not been correctly saved", indexAfterChange, indexBeforeChange);
     }
 }

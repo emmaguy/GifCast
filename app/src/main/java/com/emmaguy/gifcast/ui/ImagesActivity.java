@@ -13,10 +13,11 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.R;
 import com.emmaguy.gifcast.data.DrawableRequestQueue;
-import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.data.Image;
+import com.emmaguy.gifcast.data.RedditImagesLoader;
 import com.emmaguy.gifcast.util.Utils;
 
 import java.util.ArrayList;
@@ -24,27 +25,37 @@ import java.util.List;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
-public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener, GifCastApplication.RedditImagesLoader.OnRedditItemsChanged, DrawableRequestQueue.OnDataChangedListener {
+public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener, RedditImagesLoader.OnRedditItemsChanged, DrawableRequestQueue.OnDataChangedListener {
     private static final String GRIDVIEW_INSTANCE_STATE = "gridview_scroll_position";
 
     private GridView mGridView;
     private SmoothProgressBar mProgressBar;
 
+    private RedditImagesLoader mImagesLoader;
+
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_images);
 
-        initialise(savedInstanceState);
+        mImagesLoader = new RedditImagesLoader(getResources());
+
+        initialise();
     }
 
-    private void initialise(final Bundle savedInstanceState) {
+    private void initialise() {
         mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
 
-        mGridView.setAdapter(new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW()));
-        setImagesFromMemoryOrRetrieve(savedInstanceState);
+        DrawableRequestQueue requestQueue = ((GifCastApplication) getApplication()).requestQueue();
+
+        mGridView.setAdapter(new ImagesAdapter(this, requestQueue, shouldHideNSFW()));
+
+        requestQueue.setDataChangedListener(this);
+        mImagesLoader.setImagesRequesterListener(this);
+
+        retrieveLatestImages();
 
         enableEndlessScrolling();
 
@@ -53,41 +64,13 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         Utils.tintActionBar(this);
     }
 
-    private void setImagesFromMemoryOrRetrieve(final Bundle savedInstanceState) {
-        List<Image> images = getApp().getAllImages();
-        getApp().setImagesRequesterListener(this);
-        getApp().setDataChangedListener(this);
-
-        if (images.size() <= 0) {
-            retrieveLatestImages();
-        } else {
-            setImages(savedInstanceState, images);
-        }
+    public void requestItems(final String before, final String after) {
+        mImagesLoader.load(this, before, after);
     }
 
     private void retrieveLatestImages() {
         showAndStartAnimatingProgressBar();
-        getApp().requestItems("", "");
-    }
-
-    private void setImages(final Bundle savedInstanceState, List<Image> images) {
-        final ImagesAdapter adapter = getAdapter();
-        adapter.addImages(images);
-        adapter.setFilteringCompleteListener(new ImagesAdapter.OnFilteringComplete() {
-            @Override
-            public void onFilteringComplete() {
-                setScrollPositionFromInstanceState(savedInstanceState);
-                adapter.setFilteringCompleteListener(null);
-            }
-        });
-        adapter.notifyDataSetChanged();
-    }
-
-    private void setScrollPositionFromInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
-            mGridView.setSelection(position);
-        }
+        requestItems("", "");
     }
 
     private void enableEndlessScrolling() {
@@ -101,7 +84,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                 if (count > 0) {
                     showAndStartAnimatingProgressBar();
                     String afterId = ((Image) getAdapter().getItem(count - 1)).getRedditId();
-                    getApp().requestItems("", afterId);
+                    requestItems("", afterId);
                 }
             }
         });
@@ -109,10 +92,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     private void showAndStartAnimatingProgressBar() {
         mProgressBar.progressiveStart();
-    }
-
-    private GifCastApplication getApp() {
-        return (GifCastApplication) getApplication();
     }
 
     private boolean shouldHideNSFW() {

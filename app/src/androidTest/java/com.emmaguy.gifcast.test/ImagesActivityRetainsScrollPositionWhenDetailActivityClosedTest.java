@@ -1,14 +1,12 @@
 package com.emmaguy.gifcast.test;
 
 import android.app.Instrumentation;
-import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.data.GifCastApplication;
 import com.emmaguy.gifcast.data.Image;
 import com.emmaguy.gifcast.ui.ImageDetailActivity;
 import com.emmaguy.gifcast.ui.ImagesActivity;
@@ -34,9 +32,6 @@ public class ImagesActivityRetainsScrollPositionWhenDetailActivityClosedTest ext
         mInstrumentation = getInstrumentation();
         mSolo = new Solo(mInstrumentation);
 
-        GifCastApplication app = (GifCastApplication) getInstrumentation().getTargetContext().getApplicationContext();
-        app.setImages(createImages());
-
         givenActivityScrolledDown();
         whenDetailActivityOpened();
     }
@@ -55,7 +50,7 @@ public class ImagesActivityRetainsScrollPositionWhenDetailActivityClosedTest ext
     private List<Image> createImages() {
         List<Image> images = new ArrayList<Image>();
 
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             Image image = new Image("" + i, "Awesome Item: " + i, "gifs", false);
             image.updateUrl("" + i);
             images.add(image);
