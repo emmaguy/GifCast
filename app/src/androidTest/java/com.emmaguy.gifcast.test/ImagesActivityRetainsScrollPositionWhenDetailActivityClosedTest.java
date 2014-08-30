@@ -34,11 +34,6 @@ public class ImagesActivityRetainsScrollPositionWhenDetailActivityClosedTest ext
         mInstrumentation = getInstrumentation();
         mSolo = new Solo(mInstrumentation);
 
-        // intent to not enable endless scrolling
-        Intent i = new Intent(getInstrumentation().getTargetContext(), ImagesActivity.class);
-        i.putExtra("ENABLE_ENDLESS", false);
-        setActivityIntent(i);
-
         GifCastApplication app = (GifCastApplication) getInstrumentation().getTargetContext().getApplicationContext();
         app.setImages(createImages());
 

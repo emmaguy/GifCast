@@ -43,12 +43,10 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
 
-         mGridView.setAdapter(new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW()));
-         setImagesFromMemoryOrRetrieve(savedInstanceState);
+        mGridView.setAdapter(new ImagesAdapter(this, getApp().getRequestQueue(), shouldHideNSFW()));
+        setImagesFromMemoryOrRetrieve(savedInstanceState);
 
-        if (canEnableEndlessScrolling()) {
-            enableEndlessScrolling();
-        }
+        enableEndlessScrolling();
 
         mGridView.setOnItemClickListener(this);
 
@@ -113,14 +111,6 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mProgressBar.progressiveStart();
     }
 
-    private boolean canEnableEndlessScrolling() {
-        if(getIntent().getExtras() != null) {
-            return getIntent().getExtras().getBoolean("ENABLE_ENDLESS");
-        }
-
-        return true;
-    }
-
     private GifCastApplication getApp() {
         return (GifCastApplication) getApplication();
     }
@@ -172,7 +162,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         final boolean[] selected = new boolean[savedSubreddits.size()];
 
         int i = 0;
-        for(String s : savedSubreddits) {
+        for (String s : savedSubreddits) {
             selected[i] = selectedSubreddits.contains(s);
 
             i++;
@@ -227,7 +217,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String subreddit = input.getText().toString().trim();
-                        if(subreddit.length() > 0) {
+                        if (subreddit.length() > 0) {
                             Utils.addSubreddit(getApplication().getApplicationContext(), subreddit);
                         }
                         showSelectSubredditsDialog();
