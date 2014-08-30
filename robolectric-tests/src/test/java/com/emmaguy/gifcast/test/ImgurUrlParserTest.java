@@ -1,66 +1,70 @@
 package com.emmaguy.gifcast.test;
 
-import android.test.InstrumentationTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
-
 import com.emmaguy.gifcast.util.ImgurUrlParser;
+import com.emmaguy.gifcast.RobolectricGradleTestRunner;
 
-import junit.framework.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class ImgurUrlParserTest extends InstrumentationTestCase {
-    @SmallTest
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(RobolectricGradleTestRunner.class)
+public class ImgurUrlParserTest {
+    @Test
     public void test_parsing_valid_imgur_url_succeeds() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
-        Assert.assertTrue(parser.isImgurUrl("imgur.com/blah.gif"));
+        assertTrue(parser.isImgurUrl("imgur.com/blah.gif"));
     }
 
-    @SmallTest
+    @Test
     public void test_parsing_invalid_imgur_url_fails() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
-        Assert.assertFalse(parser.isImgurUrl("twitter.com"));
+        assertFalse(parser.isImgurUrl("twitter.com"));
     }
 
-    @SmallTest
+    @Test
     public void test_parsing_imgur_gallery_url_succeeds() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
-        Assert.assertTrue(parser.isImgurUrl("imgur.com/gallery"));
+        assertTrue(parser.isImgurUrl("imgur.com/gallery"));
     }
 
-    @SmallTest
+    @Test
     public void test_parsing_imgur_album_url_succeeds() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
-        Assert.assertTrue(parser.isImgurUrl("imgur.com/a/"));
+        assertTrue(parser.isImgurUrl("imgur.com/a/"));
     }
 
-    @SmallTest
+    @Test
     public void test_parsing_non_imgur_gallery_url_fails() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
-        Assert.assertFalse(parser.isImgurUrl("twitter.com/gallery"));
+        assertFalse(parser.isImgurUrl("twitter.com/gallery"));
     }
 
-    @SmallTest
+    @Test
     public void test_parsing_album_imgur_url_replaces_a_with_album() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
-        Assert.assertEquals("album/LRBlm", parser.parseUrl("http://imgur.com/a/LRBlm"));
+        assertEquals("album/LRBlm", parser.parseUrl("http://imgur.com/a/LRBlm"));
     }
 
-    @SmallTest
+    @Test
     public void test_parsing_imgur_url_strips_off_imgur_dot_com() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
-        Assert.assertEquals("blah.gif", parser.parseUrl("imgur.com/blah.gif"));
+        assertEquals("blah.gif", parser.parseUrl("imgur.com/blah.gif"));
     }
 
-    @SmallTest
+    @Test
     public void test_anything_after_hash_is_stripped_off() {
         ImgurUrlParser parser = new ImgurUrlParser();
 
-        Assert.assertEquals("SCnIGUn", parser.parseUrl("http://i.imgur.com/SCnIGUn.jpg?5"));
+        assertEquals("SCnIGUn", parser.parseUrl("http://i.imgur.com/SCnIGUn.jpg?5"));
     }
 }
