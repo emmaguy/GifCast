@@ -11,14 +11,14 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 
 import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.data.DrawableRequestQueue;
+import com.emmaguy.gifcast.data.RequestQueue;
 import com.emmaguy.gifcast.data.Image;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ImagesAdapter extends BaseAdapter implements Filterable {
-    private final DrawableRequestQueue mRequestQueue;
+    private final RequestQueue mRequestQueue;
     private final LayoutInflater mViewInflater;
     private final RedditImagesFilter mFilter;
     private boolean mHideNSFW;
@@ -28,7 +28,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
     private final List<Image> mOriginalImages = new ArrayList<Image>();
     private List<Image> mFilteredImages = new ArrayList<Image>();
 
-    public ImagesAdapter(Context context, DrawableRequestQueue requestQueue, boolean hideNSFW) {
+    public ImagesAdapter(Context context, RequestQueue requestQueue, boolean hideNSFW) {
         mHideNSFW = hideNSFW;
         mFilter = new RedditImagesFilter();
         mRequestQueue = requestQueue;
@@ -42,7 +42,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
     public void addImages(List<Image> images) {
         mOriginalImages.addAll(images);
 
-        if(mHideNSFW) {
+        if (mHideNSFW) {
             mFilter.filter("");
         } else {
             mFilteredImages = images;
@@ -94,9 +94,9 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
 
         if (image.hasThumbnail()) {
             boolean hasImage = true;
-            if(image.hasUrl()) {
+            if (image.hasUrl()) {
                 String firstUrl = image.getImageUrls()[0];
-                if(mRequestQueue.hasImageForUrl(firstUrl)){
+                if (mRequestQueue.hasImageForUrl(firstUrl)) {
                     setDrawableOrRequest(firstUrl, viewHolder.imageView, position);
                 } else {
                     hasImage = false;
@@ -105,7 +105,7 @@ public class ImagesAdapter extends BaseAdapter implements Filterable {
                 hasImage = false;
             }
 
-            if(!hasImage) {
+            if (!hasImage) {
                 setDrawableOrRequest(image.thumbnailUrl(), viewHolder.imageView, position);
             }
         } else if (image.hasUrl()) {

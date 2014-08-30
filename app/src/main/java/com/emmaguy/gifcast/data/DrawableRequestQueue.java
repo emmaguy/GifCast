@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-public class DrawableRequestQueue {
+public class DrawableRequestQueue implements com.emmaguy.gifcast.data.RequestQueue {
     private final Resources mResources;
     private OnDataChangedListener mDataChangedListener;
     private RequestQueue mRequestQueue;
@@ -34,14 +34,14 @@ public class DrawableRequestQueue {
 
     public void setDrawableOrAddRequest(final String url, final ImageView imageView) {
         Drawable drawable = mCache.get(url);
-        if(drawable != null) {
+        if (drawable != null) {
             Log.d("GifCastTag", "found in cache: " + url);
             imageView.setImageDrawable(drawable);
             return;
         }
 
         // if a request has already begun, don't add it again
-        if(mRequestedUrls.containsKey(url)) {
+        if (mRequestedUrls.containsKey(url)) {
             Log.d("GifCastTag", "found existing request for: " + url);
             return;
         }
@@ -76,8 +76,8 @@ public class DrawableRequestQueue {
     }
 
     private void setDrawableIfMatchingTagUrl(String url, ImageView imageView, Drawable drawable) {
-        String imageViewUrl = (String)imageView.getTag();
-        if(!TextUtils.isEmpty(imageViewUrl) && imageViewUrl.equals(url)) {
+        String imageViewUrl = (String) imageView.getTag();
+        if (!TextUtils.isEmpty(imageViewUrl) && imageViewUrl.equals(url)) {
             Log.d("GifCastTag", "setting: " + url);
             imageView.setImageDrawable(drawable);
         } else {
@@ -85,7 +85,7 @@ public class DrawableRequestQueue {
         }
     }
 
-    public boolean hasImageForUrl(String url) {
+    public boolean hasImageForUrl(final String url) {
         return mCache.get(url) != null;
     }
 
@@ -107,12 +107,9 @@ public class DrawableRequestQueue {
             this.client = client;
         }
 
-        @Override protected HttpURLConnection createConnection(URL url) throws IOException {
+        @Override
+        protected HttpURLConnection createConnection(URL url) throws IOException {
             return client.open(url);
         }
-    }
-
-    public interface OnDataChangedListener {
-        void onDataChanged();
     }
 }

@@ -2,7 +2,9 @@ package com.emmaguy.gifcast;
 
 import android.app.Application;
 
-import com.emmaguy.gifcast.data.DrawableRequestQueue;
+import com.emmaguy.gifcast.data.ImageLoader;
+import com.emmaguy.gifcast.data.RequestQueue;
+import com.emmaguy.gifcast.modules.AndroidModule;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +15,12 @@ import dagger.ObjectGraph;
 
 public class GifCastApplication extends Application {
     private ObjectGraph mObjectGraph;
-    @Inject DrawableRequestQueue mDrawableRequestQueue;
+
+    @Inject
+    RequestQueue mDrawableRequestQueue;
+
+    @Inject
+    ImageLoader mImageLoader;
 
     @Override
     public void onCreate() {
@@ -27,7 +34,15 @@ public class GifCastApplication extends Application {
         return Arrays.<Object>asList(new AndroidModule(this));
     }
 
-    public DrawableRequestQueue requestQueue() {
+    public RequestQueue requestQueue() {
         return mDrawableRequestQueue;
+    }
+
+    public ImageLoader imageLoader() {
+        return mImageLoader;
+    }
+
+    public ObjectGraph createScopedGraph(Object... modules) {
+        return mObjectGraph.plus(modules);
     }
 }

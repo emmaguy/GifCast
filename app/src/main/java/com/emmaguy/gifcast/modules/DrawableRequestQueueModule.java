@@ -1,7 +1,8 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.modules;
 
 import android.app.Application;
 
+import com.emmaguy.gifcast.data.RequestQueue;
 import com.emmaguy.gifcast.data.DrawableRequestQueue;
 
 import javax.inject.Singleton;
@@ -16,7 +17,7 @@ import dagger.Provides;
 public class DrawableRequestQueueModule {
     @Provides
     @Singleton
-    public DrawableRequestQueue provideDrawableRequestQueue(Application app) {
+    public RequestQueue provideDrawableRequestQueue(Application app) {
         return new DrawableRequestQueue(app);
     }
 }

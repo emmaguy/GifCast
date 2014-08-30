@@ -15,9 +15,11 @@ import android.widget.Toast;
 
 import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.data.DrawableRequestQueue;
+import com.emmaguy.gifcast.data.RequestQueue;
 import com.emmaguy.gifcast.data.Image;
-import com.emmaguy.gifcast.data.RedditImagesLoader;
+import com.emmaguy.gifcast.data.ImageLoader;
+import com.emmaguy.gifcast.data.OnDataChangedListener;
+import com.emmaguy.gifcast.data.OnRedditItemsChanged;
 import com.emmaguy.gifcast.util.Utils;
 
 import java.util.ArrayList;
@@ -25,13 +27,11 @@ import java.util.List;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
-public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener, RedditImagesLoader.OnRedditItemsChanged, DrawableRequestQueue.OnDataChangedListener {
+public class ImagesActivity extends Activity implements AdapterView.OnItemClickListener, OnRedditItemsChanged, OnDataChangedListener {
     private static final String GRIDVIEW_INSTANCE_STATE = "gridview_scroll_position";
 
     private GridView mGridView;
     private SmoothProgressBar mProgressBar;
-
-    private RedditImagesLoader mImagesLoader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,41 +39,45 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
         setContentView(R.layout.activity_images);
 
-        mImagesLoader = new RedditImagesLoader(getResources());
-
-        initialise();
+        initialise(savedInstanceState);
     }
 
-    private void initialise() {
+    private void initialise(Bundle savedInstanceState) {
         mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
 
-        DrawableRequestQueue requestQueue = ((GifCastApplication) getApplication()).requestQueue();
+        RequestQueue requestQueue = ((GifCastApplication) getApplication()).requestQueue();
+        ImageLoader imageLoader = ((GifCastApplication) getApplication()).imageLoader();
 
         mGridView.setAdapter(new ImagesAdapter(this, requestQueue, shouldHideNSFW()));
 
         requestQueue.setDataChangedListener(this);
-        mImagesLoader.setImagesRequesterListener(this);
+        imageLoader.setImagesRequesterListener(this);
 
-        retrieveLatestImages();
+        if (imageLoader.getAllImages().size() <= 0) {
+            retrieveLatestImages(imageLoader);
+        } else {
+            // used on orientation changed
+            setImages(savedInstanceState, imageLoader.getAllImages());
+        }
 
-        enableEndlessScrolling();
+        enableEndlessScrolling(imageLoader);
 
         mGridView.setOnItemClickListener(this);
 
         Utils.tintActionBar(this);
     }
 
-    public void requestItems(final String before, final String after) {
-        mImagesLoader.load(this, before, after);
+    public void requestItems(final ImageLoader imageLoader, final String before, final String after) {
+        imageLoader.load(this, before, after);
     }
 
-    private void retrieveLatestImages() {
+    private void retrieveLatestImages(ImageLoader imageLoader) {
         showAndStartAnimatingProgressBar();
-        requestItems("", "");
+        requestItems(imageLoader, "", "");
     }
 
-    private void enableEndlessScrolling() {
+    private void enableEndlessScrolling(final ImageLoader imageLoader) {
         mGridView.setOnScrollListener(new EndlessScrollListener(1) {
 
             @Override
@@ -84,7 +88,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                 if (count > 0) {
                     showAndStartAnimatingProgressBar();
                     String afterId = ((Image) getAdapter().getItem(count - 1)).getRedditId();
-                    requestItems("", afterId);
+                    requestItems(imageLoader, "", afterId);
                 }
             }
         });
@@ -100,6 +104,26 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
 
     private void updateHideNSFW(boolean hideNSFW) {
         getPreferences(MODE_PRIVATE).edit().putBoolean("hide_nsfw", hideNSFW).apply();
+    }
+
+    private void setImages(final Bundle savedInstanceState, List<Image> images) {
+        final ImagesAdapter adapter = getAdapter();
+        adapter.addImages(images);
+        adapter.setFilteringCompleteListener(new ImagesAdapter.OnFilteringComplete() {
+            @Override
+            public void onFilteringComplete() {
+                setScrollPositionFromInstanceState(savedInstanceState);
+                adapter.setFilteringCompleteListener(null);
+            }
+        });
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setScrollPositionFromInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            int position = savedInstanceState.getInt(GRIDVIEW_INSTANCE_STATE);
+            mGridView.setSelection(position);
+        }
     }
 
     @Override
@@ -173,7 +197,7 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
                         Utils.saveSelectedSubreddits(getApplication().getApplicationContext(), selectedSrs);
 
                         getAdapter().clearAdapter();
-                        retrieveLatestImages();
+                        retrieveLatestImages(((GifCastApplication) getApplication()).imageLoader());
                     }
                 })
                 .setNeutralButton(R.string.add_subreddit, new DialogInterface.OnClickListener() {

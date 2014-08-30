@@ -27,7 +27,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 
-public class RedditImagesLoader {
+public class RedditImagesLoader implements ImageLoader {
     private final ImgurUrlParser mImgurUrlParser = new ImgurUrlParser();
     private List<Image> mImages = new ArrayList<Image>();
     private OnRedditItemsChanged mListener;
@@ -53,10 +53,17 @@ public class RedditImagesLoader {
                 .build().create(ImgurService.class);
     }
 
+    @Override
+    public List<Image> getAllImages() {
+        return mImages;
+    }
+
+    @Override
     public void setImagesRequesterListener(OnRedditItemsChanged listener) {
         mListener = listener;
     }
 
+    @Override
     public void load(final Context context, final String before, final String after) {
         List<String> selectedSubReddits = Utils.selectedSubReddits(context.getApplicationContext());
 
@@ -147,11 +154,5 @@ public class RedditImagesLoader {
                 Log.d("GifCastTag", "Error getting imgur gallery url: " + imgurUrl + " msg: " + error.getMessage());
             }
         });
-    }
-
-    public interface OnRedditItemsChanged {
-        void onNewItemsAdded(List<Image> images);
-
-        void onItemsChanged();
     }
 }

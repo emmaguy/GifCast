@@ -1,6 +1,8 @@
-package com.emmaguy.gifcast;
+package com.emmaguy.gifcast.modules;
 
 import android.app.Application;
+
+import com.emmaguy.gifcast.GifCastApplication;
 
 import dagger.Module;
 import dagger.Provides;
@@ -8,7 +10,8 @@ import dagger.Provides;
 @Module(injects = {
         GifCastApplication.class
 }, includes = {
-        DrawableRequestQueueModule.class
+        DrawableRequestQueueModule.class,
+        ImageLoaderModule.class
 })
 public class AndroidModule {
     private final GifCastApplication mApplication;
