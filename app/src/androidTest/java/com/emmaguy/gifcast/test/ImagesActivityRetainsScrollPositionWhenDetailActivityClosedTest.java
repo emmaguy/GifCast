@@ -6,14 +6,13 @@ import android.test.suitebuilder.annotation.MediumTest;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.data.Image;
+import com.emmaguy.gifcast.data.ImageLoader;
+import com.emmaguy.gifcast.data.RequestQueue;
 import com.emmaguy.gifcast.ui.ImageDetailActivity;
 import com.emmaguy.gifcast.ui.ImagesActivity;
 import com.robotium.solo.Solo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ImagesActivityRetainsScrollPositionWhenDetailActivityClosedTest extends ActivityInstrumentationTestCase2<ImagesActivity> {
     private Instrumentation mInstrumentation;
@@ -32,31 +31,39 @@ public class ImagesActivityRetainsScrollPositionWhenDetailActivityClosedTest ext
         mInstrumentation = getInstrumentation();
         mSolo = new Solo(mInstrumentation);
 
+        injectDependencies();
+
         givenActivityScrolledDown();
         whenDetailActivityOpened();
     }
 
-    private void givenActivityScrolledDown() {
-        ImagesActivity activity = getActivity();
-        GridView gridView = (GridView) activity.findViewById(R.id.gridview);
+    private void injectDependencies() {
+        GifCastApplication app = (GifCastApplication) getInstrumentation().getTargetContext().getApplicationContext();
 
-        assertEquals("No items in adapter", 100, gridView.getAdapter().getCount());
+        assertNotNull("GifCastApplication is null", app);
+
+        mInstrumentation.waitForIdleSync();
+
+        RequestQueue r = app.requestQueue();
+        ImageLoader l = app.imageLoader();
+
+        assertNotNull("Request queue null, has not been injected", r);
+        assertNotNull("Image loader null, has not been injected", l);
+
+        assertEquals(com.emmaguy.gifcast.test.MockRequestQueue.class, r.getClass());
+        assertEquals(com.emmaguy.gifcast.test.MockImageLoader.class, l.getClass());
+
+        assertNotSame("Image loader has no items", 0, l.getAllImages().size());
+    }
+
+    private void givenActivityScrolledDown() {
+        GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
+
+        assertEquals("No items in adapter", 20, gridView.getAdapter().getCount());
 
         mInstrumentation.waitForIdleSync();
         mSolo.scrollDownList((android.widget.AbsListView) getActivity().findViewById(R.id.gridview));
         mInstrumentation.waitForIdleSync();
-    }
-
-    private List<Image> createImages() {
-        List<Image> images = new ArrayList<Image>();
-
-        for (int i = 0; i < 100; i++) {
-            Image image = new Image("" + i, "Awesome Item: " + i, "gifs", false);
-            image.updateUrl("" + i);
-            images.add(image);
-        }
-
-        return images;
     }
 
     private void whenDetailActivityOpened() {

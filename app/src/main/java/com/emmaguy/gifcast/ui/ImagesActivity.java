@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,11 +16,11 @@ import android.widget.Toast;
 
 import com.emmaguy.gifcast.GifCastApplication;
 import com.emmaguy.gifcast.R;
-import com.emmaguy.gifcast.data.RequestQueue;
 import com.emmaguy.gifcast.data.Image;
 import com.emmaguy.gifcast.data.ImageLoader;
 import com.emmaguy.gifcast.data.OnDataChangedListener;
 import com.emmaguy.gifcast.data.OnRedditItemsChanged;
+import com.emmaguy.gifcast.data.RequestQueue;
 import com.emmaguy.gifcast.util.Utils;
 
 import java.util.ArrayList;
@@ -46,14 +47,16 @@ public class ImagesActivity extends Activity implements AdapterView.OnItemClickL
         mProgressBar = (SmoothProgressBar) findViewById(R.id.progressbar);
         mGridView = (GridView) findViewById(R.id.gridview);
 
-        RequestQueue requestQueue = ((GifCastApplication) getApplication()).requestQueue();
-        ImageLoader imageLoader = ((GifCastApplication) getApplication()).imageLoader();
+        GifCastApplication app = (GifCastApplication) getApplication();
+        RequestQueue requestQueue = app.requestQueue();
+        ImageLoader imageLoader = app.imageLoader();
 
         mGridView.setAdapter(new ImagesAdapter(this, requestQueue, shouldHideNSFW()));
 
         requestQueue.setDataChangedListener(this);
         imageLoader.setImagesRequesterListener(this);
 
+        Log.d("emma", "items count ImagesActivity: " + imageLoader.getAllImages().size());
         if (imageLoader.getAllImages().size() <= 0) {
             retrieveLatestImages(imageLoader);
         } else {
