@@ -4,14 +4,6 @@ android {
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
 
-    sourceSets {
-        instrumentTest.setRoot('src/instrumentTest')
-    }
-
-    packagingOptions {
-        exclude 'LICENSE.txt'
-    }
-
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
